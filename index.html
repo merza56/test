@@ -1062,6 +1062,7 @@
             <span style="font-size:14px;">📊</span>
           </div>
           <div class="card-mini-value" id="monthTotal">0</div>
+          <div style="font-size:10px; color:var(--text-muted); margin-top:2px;" id="monthCycleSub"></div>
         </div>
 
         <div class="card-mini full-width" id="budgetCard">
@@ -1220,6 +1221,14 @@
           </div>
 
           <div class="settings-row">
+            <div class="settings-label">🗓️ بداية الشهر</div>
+            <div class="settings-input-wrap">
+              <select id="monthStartDaySelect" class="app-input" onchange="saveSettings()"></select>
+              <div style="font-size:11px; color:var(--text-sec); margin-top:4px;" id="cycleExplanation">الدورة المالية الحالية: ...</div>
+            </div>
+          </div>
+
+          <div class="settings-row">
             <div class="settings-label">⚡ مبالغ سريعة</div>
             <div class="settings-input-wrap">
               <input type="text" id="chipsInput" class="app-input" placeholder="1000,5000,10000,25000,50000" onchange="saveSettings()" />
@@ -1299,6 +1308,7 @@
     const defaultData = {
       currency: 'د.ع',
       budget: 0,
+      monthStartDay: 1,
       theme: 'light',
       quickAmounts: [1000, 2500, 5000, 10000, 25000, 50000],
       categories: [
@@ -1372,6 +1382,7 @@
         const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(OLD_STORAGE_KEY);
         if (!raw) return JSON.parse(JSON.stringify(defaultData));
         const parsed = { ...defaultData, ...JSON.parse(raw) };
+        parsed.monthStartDay = parseInt(parsed.monthStartDay, 10) || 1;
         parsed.categories = (parsed.categories || defaultData.categories).map((c, idx) => ({
           ...c,
           color: c.color || TAG_COLORS[idx % TAG_COLORS.length]
@@ -1403,6 +1414,7 @@
       document.getElementById('currencySelect').value = state.currency;
       document.getElementById('budgetInput').value = state.budget || '';
       document.getElementById('chipsInput').value = (state.quickAmounts || []).join(',');
+      populateMonthStartDays();
       renderAll();
     }
 
@@ -1520,9 +1532,87 @@
       renderStats();
     }
 
+    function populateMonthStartDays() {
+      const select = document.getElementById('monthStartDaySelect');
+      if (!select) return;
+      let html = '';
+      for (let i = 1; i <= 31; i++) {
+        let note = '';
+        if (i === 1) note = ' (بداية الشهر الميلادي - الافتراضي)';
+        else if (i === 20) note = ' (موعد صرف الراتب)';
+        else if (i === 25) note = ' (موعد صرف الراتب الشائع)';
+        else if (i === 27) note = ' (موعد صرف الراتب)';
+        else if (i === 28) note = ' (نهاية الشهر)';
+        html += `<option value="${i}">يوم ${i}${note}</option>`;
+      }
+      select.innerHTML = html;
+      select.value = state.monthStartDay || 1;
+    }
+
+    function getFinancialCycle(refDate = new Date(), startDay = (state.monthStartDay || 1)) {
+      const d = new Date(refDate);
+      const year = d.getFullYear();
+      const month = d.getMonth();
+      const day = d.getDate();
+
+      startDay = parseInt(startDay, 10) || 1;
+
+      if (startDay === 1) {
+        const startDate = new Date(year, month, 1, 0, 0, 0, 0);
+        const endDate = new Date(year, month + 1, 0, 23, 59, 59, 999);
+        return { startDate, endDate };
+      }
+
+      let startYear = year;
+      let startMonth = month;
+
+      if (day >= startDay) {
+        startYear = year;
+        startMonth = month;
+      } else {
+        startMonth = month - 1;
+        if (startMonth < 0) {
+          startMonth = 11;
+          startYear = year - 1;
+        }
+      }
+
+      const daysInStartMonth = new Date(startYear, startMonth + 1, 0).getDate();
+      const actualStartDay = Math.min(startDay, daysInStartMonth);
+      const startDate = new Date(startYear, startMonth, actualStartDay, 0, 0, 0, 0);
+
+      let nextYear = startYear;
+      let nextMonth = startMonth + 1;
+      if (nextMonth > 11) {
+        nextMonth = 0;
+        nextYear = startYear + 1;
+      }
+      const daysInNextMonth = new Date(nextYear, nextMonth + 1, 0).getDate();
+      const actualNextStartDay = Math.min(startDay, daysInNextMonth);
+      const endDate = new Date(nextYear, nextMonth, actualNextStartDay - 1, 23, 59, 59, 999);
+
+      return { startDate, endDate };
+    }
+
+    function formatCycleRange(startDate, endDate) {
+      const sDay = startDate.getDate();
+      const sMonth = startDate.toLocaleDateString('ar-IQ', { month: 'short' });
+      const eDay = endDate.getDate();
+      const eMonth = endDate.toLocaleDateString('ar-IQ', { month: 'short' });
+      return `${sDay} ${sMonth} – ${eDay} ${eMonth}`;
+    }
+
     function isSameMonth(dateStr) {
-      const today = getTodayISO().slice(0, 7);
-      return (dateStr || '').slice(0, 7) === today;
+      if (!dateStr) return false;
+      const startDay = parseInt(state.monthStartDay, 10) || 1;
+      if (startDay === 1) {
+        const today = getTodayISO().slice(0, 7);
+        return dateStr.slice(0, 7) === today;
+      }
+      const { startDate, endDate } = getFinancialCycle(new Date(), startDay);
+      const parts = dateStr.split('-');
+      const expDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10), 12, 0, 0);
+      return expDate >= startDate && expDate <= endDate;
     }
 
     function isThisWeek(dateStr) {
@@ -1545,6 +1635,13 @@
       document.getElementById('heroCurrencyBadge').textContent = state.currency;
       document.getElementById('todayTotal').textContent = `${formatNumber(todaySum)} ${state.currency}`;
       document.getElementById('monthTotal').textContent = `${formatNumber(monthSum)} ${state.currency}`;
+
+      const cycle = getFinancialCycle(new Date(), state.monthStartDay || 1);
+      const cycleText = formatCycleRange(cycle.startDate, cycle.endDate);
+      const monthSubEl = document.getElementById('monthCycleSub');
+      if (monthSubEl) monthSubEl.textContent = `دورة: ${cycleText}`;
+      const cycleExpEl = document.getElementById('cycleExplanation');
+      if (cycleExpEl) cycleExpEl.textContent = `الدورة الحالية: ${cycleText}`;
 
       const budgetWrap = document.getElementById('budgetBarWrap');
       const remEl = document.getElementById('budgetRemaining');
@@ -1629,16 +1726,18 @@
     function runFinancialAlgorithm(periodExpenses, periodTotal) {
       const insights = [];
       const now = new Date();
-      const dayOfMonth = now.getDate();
-      const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-      const daysRemaining = Math.max(1, daysInMonth - dayOfMonth + 1);
+      const { startDate, endDate } = getFinancialCycle(now, state.monthStartDay || 1);
+      const oneDayMs = 1000 * 60 * 60 * 24;
+      const totalDaysInCycle = Math.round((endDate.getTime() - startDate.getTime()) / oneDayMs) + 1;
+      const daysElapsed = Math.max(1, Math.min(totalDaysInCycle, Math.floor((now.getTime() - startDate.getTime()) / oneDayMs) + 1));
+      const daysRemaining = Math.max(1, totalDaysInCycle - daysElapsed + 1);
       const curr = state.currency;
 
       // 1. حساب المتوسط والتوقعات الشهرية
       const currentMonthExpenses = state.expenses.filter(e => isSameMonth(e.date));
       const currentMonthTotal = currentMonthExpenses.reduce((sum, e) => sum + e.amount, 0);
-      const dailyAvg = dayOfMonth > 0 ? (currentMonthTotal / dayOfMonth) : 0;
-      const monthProjection = dailyAvg * daysInMonth;
+      const dailyAvg = daysElapsed > 0 ? (currentMonthTotal / daysElapsed) : 0;
+      const monthProjection = dailyAvg * totalDaysInCycle;
 
       // 2. تحليل سقف الميزانية وسرعة الحرق (Budget & Burn-rate Analysis)
       if (state.budget && state.budget > 0) {
@@ -1767,9 +1866,11 @@
 
     function renderStats() {
       const now = new Date();
-      const dayOfMonth = now.getDate();
-      const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-      const daysRemaining = Math.max(1, daysInMonth - dayOfMonth + 1);
+      const { startDate, endDate } = getFinancialCycle(now, state.monthStartDay || 1);
+      const oneDayMs = 1000 * 60 * 60 * 24;
+      const totalDaysInCycle = Math.round((endDate.getTime() - startDate.getTime()) / oneDayMs) + 1;
+      const daysElapsed = Math.max(1, Math.min(totalDaysInCycle, Math.floor((now.getTime() - startDate.getTime()) / oneDayMs) + 1));
+      const daysRemaining = Math.max(1, totalDaysInCycle - daysElapsed + 1);
 
       // تصفية المصاريف حسب الفترة المحددة
       const filtered = state.expenses.filter(e => {
@@ -1916,6 +2017,8 @@
     function saveSettings() {
       state.currency = document.getElementById('currencySelect').value;
       state.budget = parseFloat(document.getElementById('budgetInput').value) || 0;
+      const startDaySel = document.getElementById('monthStartDaySelect');
+      if (startDaySel) state.monthStartDay = parseInt(startDaySel.value, 10) || 1;
       const chipsRaw = document.getElementById('chipsInput').value;
       const parsedChips = chipsRaw.split(',').map(s => parseFloat(s.trim())).filter(n => n > 0);
       if (parsedChips.length) state.quickAmounts = parsedChips;
