@@ -15,7 +15,7 @@
   <link id="appleTouchIcon" rel="apple-touch-icon" href="">
   <link id="pwaManifest" rel="manifest" href="">
 
-  <title>مصاريفي — إدارة وتتبع المصاريف الذكية</title>
+  <title>مصاريفي — إدارة وتتبع المصاريف والدخل الذكي</title>
   <style>
     :root {
       --bg: #FFFFFF;
@@ -29,6 +29,8 @@
       --border-focus: #0D6EFD;
       --accent: #2563EB;
       --accent-gradient: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+      --income-accent: #10B981;
+      --income-gradient: linear-gradient(135deg, #10B981 0%, #059669 100%);
       --danger: #DC3545;
       --danger-bg: #F8D7DA;
       --danger-text: #842029;
@@ -41,8 +43,12 @@
       --info: #0EA5E9;
       --info-bg: #CFE2FF;
       --info-text: #084298;
-      --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --purple: #8B5CF6;
+      --purple-bg: #EDE9FE;
+      --purple-text: #5B21B6;
+      --card-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
       --hero-shadow: 0 8px 24px rgba(37, 99, 235, 0.12);
+      --income-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
       --safe-top: env(safe-area-inset-top, 16px);
       --safe-bottom: env(safe-area-inset-bottom, 16px);
 
@@ -70,6 +76,8 @@
       --border-focus: #3B82F6;
       --accent: #3B82F6;
       --accent-gradient: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+      --income-accent: #10B981;
+      --income-gradient: linear-gradient(135deg, #10B981 0%, #059669 100%);
       --danger: #EF4444;
       --danger-bg: #371C1D;
       --danger-text: #FCA5A5;
@@ -82,8 +90,12 @@
       --info: #38BDF8;
       --info-bg: #102A3C;
       --info-text: #7DD3FC;
-      --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+      --purple: #A78BFA;
+      --purple-bg: #2E1B4E;
+      --purple-text: #DDD6FE;
+      --card-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
       --hero-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      --income-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 
       /* Category Tag Colors (Dark) */
       --tag-gray-bg: #2C2C2C; --tag-gray-txt: #E0E0E0;
@@ -109,7 +121,7 @@
       background-color: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding-bottom: calc(var(--safe-bottom) + 80px);
+      padding-bottom: calc(var(--safe-bottom) + 82px);
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
       transition: background-color 0.25s, color 0.25s;
@@ -175,12 +187,12 @@
     }
 
     .page-container {
-      max-width: 560px;
+      max-width: 580px;
       margin: 0 auto;
       padding: 14px 16px;
     }
 
-    /* Hero Amount Input Section */
+    /* Hero Amount Input Section (Shared for Expenses and Income) */
     .hero-amount-section {
       background: var(--bg-card);
       border: 2px solid var(--border);
@@ -193,9 +205,18 @@
       transition: border-color 0.2s, box-shadow 0.2s;
     }
 
+    .hero-amount-section.income-theme {
+      box-shadow: var(--income-shadow);
+    }
+
     .hero-amount-section:focus-within {
       border-color: var(--accent);
       box-shadow: 0 8px 28px rgba(37, 99, 235, 0.22);
+    }
+
+    .hero-amount-section.income-theme:focus-within {
+      border-color: var(--income-accent);
+      box-shadow: 0 8px 28px rgba(16, 185, 129, 0.25);
     }
 
     .hero-label-row {
@@ -216,6 +237,10 @@
       gap: 5px;
     }
 
+    .hero-title.income-color {
+      color: var(--income-accent);
+    }
+
     .hero-currency-badge {
       font-size: 12px;
       font-weight: 700;
@@ -223,6 +248,11 @@
       border-radius: 20px;
       background: var(--tag-blue-bg);
       color: var(--tag-blue-txt);
+    }
+
+    .hero-currency-badge.income-badge {
+      background: var(--tag-green-bg);
+      color: var(--tag-green-txt);
     }
 
     .hero-display-box {
@@ -312,6 +342,11 @@
       transform: scale(0.96);
     }
 
+    .chip-btn.income-chip:active {
+      background: var(--income-accent);
+      border-color: var(--income-accent);
+    }
+
     /* Details Rows for Entry */
     .entry-fields-box {
       border: 1px solid var(--border);
@@ -368,7 +403,7 @@
       color: var(--text-muted);
     }
 
-    /* Category Tag Pills */
+    /* Category & Source Tag Pills */
     .tag-pill {
       display: inline-flex;
       align-items: center;
@@ -389,6 +424,11 @@
       transform: translateY(-1px);
     }
 
+    .tag-pill.income-active.active {
+      border-color: var(--income-accent);
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+    }
+
     .tag-gray   { background: var(--tag-gray-bg);   color: var(--tag-gray-txt); }
     .tag-brown  { background: var(--tag-brown-bg);  color: var(--tag-brown-txt); }
     .tag-orange { background: var(--tag-orange-bg); color: var(--tag-orange-txt); }
@@ -399,7 +439,7 @@
     .tag-pink   { background: var(--tag-pink-bg);   color: var(--tag-pink-txt); }
     .tag-red    { background: var(--tag-red-bg);    color: var(--tag-red-txt); }
 
-    /* Primary Action Button */
+    /* Primary Buttons */
     .btn-primary {
       width: 100%;
       background: var(--accent-gradient);
@@ -419,9 +459,72 @@
       transition: transform 0.1s, opacity 0.15s;
     }
 
+    .btn-primary.income-btn {
+      background: var(--income-gradient);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+    }
+
     .btn-primary:active {
       transform: scale(0.98);
       opacity: 0.9;
+    }
+
+    /* Master Wallet Hero Banner */
+    .wallet-hero-card {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(16, 185, 129, 0.08) 100%);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 18px 20px;
+      margin-bottom: 18px;
+      box-shadow: var(--card-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wallet-hero-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-sec);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .wallet-balance-num {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 14px;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .wallet-stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .wallet-stat-box {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .wallet-stat-label {
+      font-size: 10px;
+      color: var(--text-sec);
+      font-weight: 600;
+    }
+
+    .wallet-stat-val {
+      font-size: 13.5px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
     }
 
     /* Summary Mini Cards */
@@ -457,7 +560,7 @@
     }
 
     .card-mini-value {
-      font-size: 19px;
+      font-size: 18px;
       font-weight: 800;
       color: var(--text);
       font-variant-numeric: tabular-nums;
@@ -588,6 +691,10 @@
       padding-left: 6px;
     }
 
+    .income-amount-text {
+      color: var(--income-accent);
+    }
+
     .expense-del-btn {
       background: transparent;
       border: none;
@@ -624,7 +731,280 @@
       font-size: 13px;
     }
 
-    /* ANALYTICS SECTION ENHANCEMENTS */
+    
+    /* --- HOLISTIC ANALYTICS STYLES --- */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .pillar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .pillar-card.income-pillar {
+      border-top: 3px solid var(--income-accent);
+    }
+
+    .pillar-card.expense-pillar {
+      border-top: 3px solid var(--danger);
+    }
+
+    .pillar-card.balance-pillar {
+      border-top: 3px solid var(--accent);
+    }
+
+    .pillar-card.flow-pillar {
+      border-top: 3px solid var(--purple);
+    }
+
+    .pillar-label {
+      font-size: 11px;
+      color: var(--text-sec);
+      font-weight: 600;
+    }
+
+    .pillar-value {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .pillar-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* Flow Allocation Card */
+    .flow-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .flow-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .flow-track {
+      display: flex;
+      height: 12px;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 8px;
+      background: var(--border);
+    }
+
+    .flow-expense-fill {
+      background: var(--danger);
+      height: 100%;
+      transition: width 0.4s ease;
+    }
+
+    .flow-savings-fill {
+      background: var(--income-accent);
+      height: 100%;
+      transition: width 0.4s ease;
+    }
+
+    .flow-legend {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-sec);
+    }
+
+    /* Dual Breakdown Grid */
+    .dual-breakdown-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    /* =========================================================
+       DYNAMIC FINANCIAL HEALTH & ANALYTICS STYLES
+       ========================================================= */
+    .health-status-hero {
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1.5px solid transparent;
+      box-shadow: var(--card-shadow);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .status-thriving {
+      background: linear-gradient(135deg, rgba(25, 135, 84, 0.12) 0%, rgba(16, 185, 129, 0.05) 100%);
+      border-color: rgba(25, 135, 84, 0.35);
+    }
+
+    .status-stable {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.10) 0%, rgba(14, 165, 233, 0.05) 100%);
+      border-color: rgba(37, 99, 235, 0.3);
+    }
+
+    .status-caution {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(217, 119, 6, 0.05) 100%);
+      border-color: rgba(245, 158, 11, 0.35);
+    }
+
+    .status-critical {
+      background: linear-gradient(135deg, rgba(234, 88, 12, 0.14) 0%, rgba(220, 38, 38, 0.06) 100%);
+      border-color: rgba(234, 88, 12, 0.4);
+    }
+
+    .status-deficit {
+      background: linear-gradient(135deg, rgba(220, 53, 69, 0.16) 0%, rgba(185, 28, 28, 0.07) 100%);
+      border-color: rgba(220, 53, 69, 0.45);
+    }
+
+    .status-unbudgeted {
+      background: linear-gradient(135deg, rgba(108, 117, 125, 0.10) 0%, rgba(173, 181, 189, 0.05) 100%);
+      border-color: rgba(108, 117, 125, 0.3);
+    }
+
+    .health-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .health-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+    }
+
+    .health-score-pill {
+      font-size: 13px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .health-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .health-summary {
+      font-size: 12px;
+      color: var(--text-sec);
+      line-height: 1.6;
+    }
+
+    .health-score-track {
+      height: 8px;
+      background: rgba(0, 0, 0, 0.08);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    [data-theme="dark"] .health-score-track {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .health-score-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    /* Advanced Predictive Forecasts Card */
+    .forecast-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .forecast-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .forecast-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .forecast-item {
+      background: var(--bg-sec);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+
+    .forecast-label {
+      font-size: 11px;
+      color: var(--text-sec);
+      font-weight: 600;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .forecast-val {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .forecast-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* KPI Cards */
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -653,7 +1033,7 @@
     }
 
     .kpi-value {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 800;
       color: var(--text);
       font-variant-numeric: tabular-nums;
@@ -665,7 +1045,7 @@
       margin-top: 3px;
     }
 
-    /* Financial Advisory Cards (Algorithm Outputs) */
+    /* Adaptive Insights List */
     .insights-panel {
       display: flex;
       flex-direction: column;
@@ -674,13 +1054,14 @@
     }
 
     .insight-card {
-      border-radius: 12px;
-      padding: 12px 14px;
+      border-radius: 14px;
+      padding: 13px 15px;
       border: 1px solid transparent;
       display: flex;
-      gap: 10px;
+      gap: 12px;
       align-items: flex-start;
-      line-height: 1.5;
+      line-height: 1.6;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
     }
 
     .insight-card.danger {
@@ -707,8 +1088,14 @@
       color: var(--info-text);
     }
 
+    .insight-card.purple {
+      background: var(--purple-bg);
+      border-color: rgba(139, 92, 246, 0.25);
+      color: var(--purple-text);
+    }
+
     .insight-icon {
-      font-size: 18px;
+      font-size: 20px;
       line-height: 1.2;
       flex-shrink: 0;
     }
@@ -718,14 +1105,129 @@
     }
 
     .insight-heading {
-      font-size: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .insight-tag {
+      font-size: 10px;
       font-weight: 700;
-      margin-bottom: 3px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: rgba(0,0,0,0.07);
     }
 
     .insight-desc {
-      font-size: 11.5px;
+      font-size: 12px;
       opacity: 0.95;
+    }
+
+    /* Money Leaks Radar Card */
+    .leaks-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .leaks-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .leaks-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--warning);
+      background: var(--warning-bg);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    /* Weekend vs Weekday Card */
+    .pattern-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .pattern-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+
+    .pattern-row:last-child {
+      border-bottom: none;
+    }
+
+    /* Interactive What-If Savings Simulator */
+    .simulator-card {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+      border: 1.5px dashed var(--accent);
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+
+    .simulator-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .simulator-btn-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .sim-btn {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 0;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .sim-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+
+    .sim-result-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.6;
     }
 
     /* Daily Bar Chart */
@@ -936,6 +1438,10 @@
       color: var(--accent);
     }
 
+    .nav-item.income-tab-btn.active {
+      color: var(--income-accent);
+    }
+
     .nav-icon {
       font-size: 19px;
       line-height: 1;
@@ -978,7 +1484,7 @@
 </head>
 <body>
 
-  <div id="toast" class="toast">تم حفظ السجل بنجاح ✓</div>
+  <div id="toast" class="toast">تم الحفظ بنجاح ✓</div>
 
   <!-- Top Navigation Bar -->
   <header class="topbar">
@@ -997,10 +1503,10 @@
     <!-- TAB 1: EXPENSES & QUICK ENTRY -->
     <div id="tab-home" class="tab-pane active">
 
-      <!-- HERO AMOUNT REGISTRATION SECTION (واضح وبارز جداً) -->
+      <!-- HERO AMOUNT REGISTRATION SECTION (المصاريف) -->
       <section class="hero-amount-section">
         <div class="hero-label-row">
-          <span class="hero-title">💰 تسجيل مبلغ جديد</span>
+          <span class="hero-title">💰 تسجيل مصروف جديد</span>
           <span class="hero-currency-badge" id="heroCurrencyBadge">د.ع</span>
         </div>
 
@@ -1029,7 +1535,7 @@
           <div class="entry-row">
             <div class="entry-label">📝 البيان</div>
             <div class="entry-input-wrap">
-              <input type="text" id="noteInput" class="app-input" placeholder="وصف المصروف (غداء، تكسي، بقالة...)" />
+              <input type="text" id="noteInput" class="app-input" placeholder="وصف المصروف (غداء، تكسي، مسواك...)" />
             </div>
           </div>
 
@@ -1048,31 +1554,41 @@
 
       <!-- Mini KPI Summary Cards -->
       <section class="summary-grid">
+        <div class="card-mini" style="border-right: 3px solid var(--income-accent);">
+          <div class="card-mini-head">
+            <span>💵 الرصيد المتبقي</span>
+            <span style="font-size:14px;">👛</span>
+          </div>
+          <div class="card-mini-value" id="homeCurrentBalance">0</div>
+          <div style="font-size:10px; color:var(--text-sec);" id="homeBalanceSub">الصافي المتوفر</div>
+        </div>
+
         <div class="card-mini">
           <div class="card-mini-head">
             <span>📅 مصاريف اليوم</span>
             <span style="font-size:14px;">☀️</span>
           </div>
           <div class="card-mini-value" id="todayTotal">0</div>
+          <div style="font-size:10px; color:var(--text-muted);" id="todaySub">اليوم الحالي</div>
         </div>
 
         <div class="card-mini">
           <div class="card-mini-head">
-            <span>💳 إجمالي الشهر</span>
+            <span>💳 إجمالي مصاريف الشهر</span>
             <span style="font-size:14px;">📊</span>
           </div>
           <div class="card-mini-value" id="monthTotal">0</div>
-          <div style="font-size:10px; color:var(--text-muted); margin-top:2px;" id="monthCycleSub"></div>
+          <div style="font-size:10px; color:var(--text-muted);" id="monthCycleSub"></div>
         </div>
 
-        <div class="card-mini full-width" id="budgetCard">
+        <div class="card-mini" id="budgetCard">
           <div class="card-mini-head">
-            <span>🎯 حالة الميزانية الشهرية</span>
+            <span>🎯 حالة الميزانية</span>
             <span id="budgetRemaining">غير محددة</span>
           </div>
           <div id="budgetBarWrap" style="display:none; margin-top:4px;">
             <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-sec); margin-bottom:3px;">
-              <span>المستهلك من الميزانية</span>
+              <span>المستهلك</span>
               <span id="budgetPercent" style="font-weight:700;">0%</span>
             </div>
             <div class="app-progress-bar">
@@ -1088,7 +1604,7 @@
           <div class="filter-tabs">
             <button class="filter-btn active" onclick="setFilter('today', this)">اليوم</button>
             <button class="filter-btn" onclick="setFilter('week', this)">الأسبوع</button>
-            <button class="filter-btn" onclick="setFilter('month', this)">الشهر</button>
+            <button class="filter-btn" onclick="setFilter('month', this)">الدورة</button>
             <button class="filter-btn" onclick="setFilter('all', this)">الكل</button>
           </div>
           <input type="search" id="searchInput" class="search-box" placeholder="🔍 بحث في السجل..." oninput="renderExpenses()" />
@@ -1105,59 +1621,323 @@
 
     </div>
 
-    <!-- TAB 2: ADVANCED ANALYTICS & SMART FINANCIAL ADVISOR -->
+    <!-- TAB 2: INCOMES & CURRENT BALANCE (قسم الدخل والرصيد الجديد) -->
+    <div id="tab-income" class="tab-pane">
+
+      <!-- MASTER WALLET & CURRENT BALANCE HERO -->
+      <section class="wallet-hero-card">
+        <div class="wallet-hero-head">
+          <span>💼 الرصيد المالي الحالي المتوفر في المحفظة</span>
+          <span style="font-size:11px; font-weight:700; color:var(--income-accent);">مباشر</span>
+        </div>
+        <div class="wallet-balance-num" id="walletBalanceBig">0 د.ع</div>
+
+        <div class="wallet-stats-row">
+          <div class="wallet-stat-box">
+            <span class="wallet-stat-label">📥 إجمالي الداخل:</span>
+            <span class="wallet-stat-val" style="color:var(--income-accent);" id="walletInflowTotal">+0</span>
+          </div>
+          <div class="wallet-stat-box">
+            <span class="wallet-stat-label">📤 إجمالي الخارج:</span>
+            <span class="wallet-stat-val" style="color:var(--danger);" id="walletOutflowTotal">-0</span>
+          </div>
+          <div class="wallet-stat-box">
+            <span class="wallet-stat-label">⚖️ الصافي الشهري:</span>
+            <span class="wallet-stat-val" id="walletNetFlow">0</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- HERO INCOME ENTRY SECTION (تسجيل المبالغ الداخلة بوضوح كبير) -->
+      <section class="hero-amount-section income-theme">
+        <div class="hero-label-row">
+          <span class="hero-title income-color">📥 تسجيل مبلغ داخل / إيراد جديد</span>
+          <span class="hero-currency-badge income-badge" id="incomeCurrencyBadge">د.ع</span>
+        </div>
+
+        <div class="hero-display-box">
+          <input 
+            type="number" 
+            inputmode="decimal" 
+            id="incomeAmountInput" 
+            class="hero-input" 
+            placeholder="0" 
+            autocomplete="off"
+          />
+          <button type="button" class="hero-clear-btn" onclick="clearIncomeAmount()" title="مسح المبلغ">✕</button>
+        </div>
+
+        <!-- Quick Amount Increments for Income -->
+        <div class="quick-chips-row" id="incomeQuickChips"></div>
+
+        <!-- Extra Entry Details for Income -->
+        <div class="entry-fields-box">
+          <div class="entry-row">
+            <div class="entry-label">🏷️ مصدر الدخل</div>
+            <div class="entry-input-wrap" id="incomeSourceGrid"></div>
+          </div>
+
+          <div class="entry-row">
+            <div class="entry-label">📝 البيان</div>
+            <div class="entry-input-wrap">
+              <input type="text" id="incomeNoteInput" class="app-input" placeholder="وصف الإيراد (راتب شهر، سلفة، عمل حر، هدية...)" />
+            </div>
+          </div>
+
+          <div class="entry-row">
+            <div class="entry-label">📆 التاريخ</div>
+            <div class="entry-input-wrap">
+              <input type="date" id="incomeDateInput" class="app-input" />
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn-primary income-btn" onclick="addIncome()">
+          <span>📥 حفظ المبلغ الداخل إلى المحفظة</span>
+        </button>
+      </section>
+
+      <!-- INCOME ANALYTICS & INSIGHTS (تحليل المبالغ الداخلة) -->
+      <section class="section-wrap">
+        <div class="section-header">
+          <span>📊 تحليلات ومؤشرات المبالغ الداخلة</span>
+          <span style="font-size:11px; color:var(--text-sec);" id="incomeCycleLabel"></span>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-title">💰 معدل الادخار الفعلي</div>
+            <div class="kpi-value" id="kpiSavingsRate">0%</div>
+            <div class="kpi-sub" id="kpiSavingsRateSub">من إجمالي المبالغ الداخلة</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-title">📅 تغطية الدخل للمصاريف</div>
+            <div class="kpi-value" id="kpiIncomeCoverage">0%</div>
+            <div class="kpi-sub" id="kpiIncomeCoverageSub">نسبة استهلاك المصاريف للدخل</div>
+          </div>
+        </div>
+
+        <!-- Income Sources Breakdown -->
+        <div class="chart-box">
+          <div class="chart-title">
+            <span>🏷️ توزيع مصادر الدخل في هذه الدورة</span>
+            <span id="incomeSourcesSum" style="font-size:11px; font-weight:normal; color:var(--text-sec);">0 د.ع</span>
+          </div>
+          <div id="incomeSourcesBars"></div>
+        </div>
+
+        <!-- Inflow vs Outflow Visual Balance Bar -->
+        <div class="ratio-card">
+          <div class="ratio-head">
+            <span>⚖️ مقارنة التدفق المالي (الداخل مقابل الخارج)</span>
+            <span id="cashFlowRatioText">0% / 0%</span>
+          </div>
+          <div class="ratio-bar">
+            <div class="ratio-needs" id="inflowRatioBar" style="width: 50%; background:var(--income-accent);"></div>
+            <div class="ratio-wants" id="outflowRatioBar" style="width: 50%; background:var(--danger);"></div>
+          </div>
+          <div class="ratio-legend">
+            <span>🟢 المبالغ الداخلة: <strong id="ratioInflowVal">0</strong></span>
+            <span>🔴 المصاريف الخارجة: <strong id="ratioOutflowVal">0</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- INCOME REGISTER & LOG (سجل المبالغ الداخلة) -->
+      <section class="section-wrap">
+        <div class="table-toolbar">
+          <div class="filter-tabs">
+            <button class="filter-btn active" onclick="setIncomeFilter('month', this)">الدورة الحالية</button>
+            <button class="filter-btn" onclick="setIncomeFilter('30days', this)">آخر 30 يوم</button>
+            <button class="filter-btn" onclick="setIncomeFilter('all', this)">كل الإيرادات</button>
+          </div>
+          <input type="search" id="incomeSearchInput" class="search-box" placeholder="🔍 بحث في الدخل..." oninput="renderIncomes()" />
+        </div>
+
+        <div class="expenses-card-list">
+          <div id="incomeList"></div>
+          <div class="list-footer">
+            <span id="filteredIncomeCount">0 دفعات</span>
+            <span id="filteredIncomeSum" style="color:var(--income-accent);">المجموع: +0</span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- TAB 3: ADVANCED ANALYTICS & ADAPTIVE FINANCIAL ADVISOR -->
+        <!-- TAB 3: HOLISTIC SMART ANALYTICS (التحليل الذكي الشامل: الدخل، الرصيد، المصاريف) -->
     <div id="tab-stats" class="tab-pane">
 
       <!-- Analytics Filter -->
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <h2 style="font-size:15px; font-weight:800;">📊 التحليل والمستشار المالي</h2>
+        <h2 style="font-size:15px; font-weight:800;">📊 التحليل المالي الشامل للمحفظة</h2>
         <div class="filter-tabs">
-          <button class="filter-btn active" onclick="setStatsPeriod('month', this)">الشهر الحالي</button>
+          <button class="filter-btn active" onclick="setStatsPeriod('month', this)">الدورة الحالية</button>
           <button class="filter-btn" onclick="setStatsPeriod('30days', this)">آخر 30 يوم</button>
           <button class="filter-btn" onclick="setStatsPeriod('all', this)">الكل</button>
         </div>
       </div>
 
-      <!-- Financial KPI Metrics Cards -->
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-title">⚡ متوسط الصرف اليومي</div>
-          <div class="kpi-value" id="kpiDailyAvg">0</div>
-          <div class="kpi-sub" id="kpiDailySub">خلال أيام الشهر المنقضية</div>
+      <!-- 1. HOLISTIC FINANCIAL HEALTH & CASH FLOW HERO -->
+      <div id="healthStatusHero" class="health-status-hero status-stable">
+        <div class="health-top-row">
+          <span class="health-badge" id="healthStatusBadge">
+            <span id="healthStatusDot">●</span>
+            <span id="healthStatusTitle">جاري تحليل المحفظة...</span>
+          </span>
+          <div class="health-score-pill">
+            <span>درجة الصحة:</span>
+            <strong id="healthScoreValue">85%</strong>
+          </div>
         </div>
 
-        <div class="kpi-card">
-          <div class="kpi-title">🛡️ الصرف اليومي الآمن</div>
-          <div class="kpi-value" id="kpiSafeDaily">0</div>
-          <div class="kpi-sub" id="kpiSafeDailySub">للبقاء ضمن الميزانية</div>
+        <div>
+          <div class="health-title" id="healthHeroHeading">توازن واستقرار مالي</div>
+          <p class="health-summary" id="healthHeroSummary">يتم احتساب توازن الدخل والمصاريف ورصيدك الحالي وتأثير وتيرة الصرف على أمان محفظتك.</p>
         </div>
 
-        <div class="kpi-card">
-          <div class="kpi-title">📈 التوقع لنهاية الشهر</div>
-          <div class="kpi-value" id="kpiMonthProjection">0</div>
-          <div class="kpi-sub" id="kpiProjectionSub">حسب الوتيرة الحالية</div>
-        </div>
-
-        <div class="kpi-card">
-          <div class="kpi-title">🏆 الفئة الأكثر استهلاكاً</div>
-          <div class="kpi-value" style="font-size:15px;" id="kpiTopCategory">—</div>
-          <div class="kpi-sub" id="kpiTopCategorySub">0% من الإجمالي</div>
+        <div class="health-score-track">
+          <div class="health-score-fill" id="healthScoreFill" style="width:85%; background:var(--accent);"></div>
         </div>
       </div>
 
-      <!-- Smart Financial Insights Engine (Algorithm Outputs) -->
+      <!-- 2. THE THREE PILLARS MASTER KPI GRID (الدخل، المصاريف، الرصيد، صافي التدفق) -->
+      <div class="pillars-grid">
+        <div class="pillar-card income-pillar">
+          <div class="pillar-label">📥 إجمالي الدخل المحصل</div>
+          <div class="pillar-value" style="color:var(--income-accent);" id="pillarIncome">+0</div>
+          <div class="pillar-sub" id="pillarIncomeSub">متوسط: 0 / يوم</div>
+        </div>
+
+        <div class="pillar-card expense-pillar">
+          <div class="pillar-label">📤 إجمالي المصاريف</div>
+          <div class="pillar-value" style="color:var(--danger);" id="pillarExpense">-0</div>
+          <div class="pillar-sub" id="pillarExpenseSub">متوسط: 0 / يوم</div>
+        </div>
+
+        <div class="pillar-card balance-pillar">
+          <div class="pillar-label">💼 الرصيد الحالي المتوفر</div>
+          <div class="pillar-value" id="pillarBalance">0</div>
+          <div class="pillar-sub" id="pillarBalanceSub">صافي المحفظة الآن</div>
+        </div>
+
+        <div class="pillar-card flow-pillar">
+          <div class="pillar-label">⚖️ صافي التدفق المالي</div>
+          <div class="pillar-value" id="pillarNetFlow">0</div>
+          <div class="pillar-sub" id="pillarNetFlowSub">معدل التوفير: 0%</div>
+        </div>
+      </div>
+
+      <!-- 3. CASH FLOW ALLOCATION BAR (شريط تخصيص التدفق المالي) -->
+      <div class="flow-card">
+        <div class="flow-head">
+          <span>⚖️ ميزان الدخل (أين تذهب أموالك من كل 100 ألف دينار؟)</span>
+          <span id="flowRatioBadge" style="font-size:11px; font-weight:700;">0% مصاريف / 0% توفير</span>
+        </div>
+        <div class="flow-track">
+          <div class="flow-expense-fill" id="flowExpenseFill" style="width:50%;"></div>
+          <div class="flow-savings-fill" id="flowSavingsFill" style="width:50%;"></div>
+        </div>
+        <div class="flow-legend">
+          <span>🔴 المستهلك في المصاريف: <strong id="flowExpenseVal">0</strong></span>
+          <span>🟢 الفائض / المدخرات: <strong id="flowSavingsVal">0</strong></span>
+        </div>
+      </div>
+
+      <!-- 4. COMPREHENSIVE PREDICTIVE PROJECTIONS (توقعات الرصيد والمحفظة) -->
+      <div class="forecast-card">
+        <div class="forecast-head">
+          <span>🔮 توقعات السيولة والرصيد حتى نهاية الدورة</span>
+          <span style="font-size:11px; font-weight:normal; color:var(--text-sec);" id="forecastCycleDates"></span>
+        </div>
+        <div class="forecast-grid">
+          <div class="forecast-item">
+            <div class="forecast-label">💼 الرصيد المتوقع بنهاية الدورة</div>
+            <div class="forecast-val" id="fcProjectedBalance">0</div>
+            <div class="forecast-sub" id="fcBalanceDiffSub">عند موعد الراتب القادم</div>
+          </div>
+
+          <div class="forecast-item">
+            <div class="forecast-label">🛡️ أمان السيولة (Runway)</div>
+            <div class="forecast-val" style="font-size:14px;" id="fcRunwayDays">0 يوماً</div>
+            <div class="forecast-sub" id="fcRunwaySub">تغطية الرصيد بدون دخل جديد</div>
+          </div>
+
+          <div class="forecast-item">
+            <div class="forecast-label">⚡ سقف الصرف اليومي الموصى به</div>
+            <div class="forecast-val" id="fcHolisticDaily">0</div>
+            <div class="forecast-sub" id="fcHolisticDailySub">للأيام المتبقية</div>
+          </div>
+
+          <div class="forecast-item">
+            <div class="forecast-label">📈 التوقع الإجمالي للمصاريف</div>
+            <div class="forecast-val" style="font-size:14px;" id="fcProjectedExpense">0</div>
+            <div class="forecast-sub" id="fcExpenseDiffSub">مقارنة بالدخل والميزانية</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. UNIFIED ADAPTIVE FINANCIAL ADVISOR (المستشار المالي الشامل للمحفظة) -->
       <div class="section-wrap">
         <div class="section-header">
-          <span>🧠 ملاحظات واقتراحات المستشار المالي</span>
+          <span>🧠 ملاحظات وتوصيات المستشار المالي (تقييم شامل للدخل والمصاريف)</span>
           <span style="font-size:11px; color:var(--text-sec); font-weight:normal;" id="insightsCountBadge">تحليل حي</span>
         </div>
         <div class="insights-panel" id="insightsList"></div>
       </div>
 
-      <!-- Needs vs Discretionary Ratio Card -->
-      <div class="ratio-card">
+      <!-- 6. WHAT-IF WEALTH BUILDER SIMULATOR (محاكي تنمية المحفظة والادخار) -->
+      <div class="simulator-card">
+        <div class="simulator-head">
+          <span>🎯 محاكي تنمية المحفظة (ماذا يحدث إذا خفضت نفقاتك؟)</span>
+          <span style="font-size:11px; color:var(--accent); font-weight:700;">حساب فوري</span>
+        </div>
+        <div class="simulator-btn-row">
+          <button type="button" class="sim-btn" onclick="runSim(10, this)">توفير 10%</button>
+          <button type="button" class="sim-btn active" onclick="runSim(20, this)">توفير 20%</button>
+          <button type="button" class="sim-btn" onclick="runSim(30, this)">توفير 30%</button>
+        </div>
+        <div class="sim-result-box" id="simResultBox">
+          جاري تجهيز محاكي التوفير...
+        </div>
+      </div>
+
+      <!-- 7. MONEY LEAKS RADAR (رادار التسربات الخفية مقارنة بالدخل) -->
+      <div class="leaks-card" id="leaksCard">
+        <div class="leaks-head">
+          <span style="font-size:13px; font-weight:800;">🔍 رادار التسربات المالية وتأثيرها على رصيدك</span>
+          <span class="leaks-badge" id="leaksBadge">مبالغ صغيرة متكررة</span>
+        </div>
+        <div style="font-size:12px; color:var(--text-sec); line-height:1.6;" id="leaksContent"></div>
+      </div>
+
+      <!-- 8. DUAL BREAKDOWN: INCOME SOURCES VS EXPENSE CATEGORIES -->
+      <div class="dual-breakdown-grid">
+        <!-- Income Sources Column -->
+        <div class="chart-box" style="margin-bottom:0;">
+          <div class="chart-title">
+            <span>📥 توزيع مصادر الدخل</span>
+            <span id="statsIncomeSumBadge" style="font-size:11px; font-weight:bold; color:var(--income-accent);">+0 د.ع</span>
+          </div>
+          <div id="statsIncomeSourcesList"></div>
+        </div>
+
+        <!-- Top Expense Categories Column -->
+        <div class="chart-box" style="margin-bottom:0; margin-top:12px;">
+          <div class="chart-title">
+            <span>📤 توزيع فئات المصاريف</span>
+            <span id="statsExpenseSumBadge" style="font-size:11px; font-weight:bold; color:var(--danger);">-0 د.ع</span>
+          </div>
+          <div id="statsExpenseCategoriesList"></div>
+        </div>
+      </div>
+
+      <!-- 9. NEEDS VS WANTS 50/30/20 RATIO -->
+      <div class="ratio-card" style="margin-top:16px;">
         <div class="ratio-head">
-          <span>⚖️ توزيع الإنفاق (أساسيات مقابل كماليات)</span>
+          <span>⚖️ هيكل النفقات (الضروريات الأساسية مقابل الكماليات)</span>
           <span id="ratioText">0% / 0%</span>
         </div>
         <div class="ratio-bar">
@@ -1165,36 +1945,27 @@
           <div class="ratio-wants" id="ratioWantsBar" style="width: 50%;"></div>
         </div>
         <div class="ratio-legend">
-          <span>🟢 أساسيات (طعام، فواتير، صحة، تنقل): <strong id="ratioNeedsVal">0</strong></span>
-          <span>🟡 كماليات وترفيه (تسوق، مقاهي، ترفيه): <strong id="ratioWantsVal">0</strong></span>
+          <span>🟢 التزامات وضروريات (طعام، فواتير، صحة، تنقل): <strong id="ratioNeedsVal">0</strong></span>
+          <span>🟡 كماليات وترفيه (تسوق، كافيهات، ترفيه): <strong id="ratioWantsVal">0</strong></span>
         </div>
       </div>
 
-      <!-- Daily Spending Trend Bar Chart -->
-      <div class="chart-box">
+      <!-- 10. DAILY TIMELINE ACTIVITY (CHART) -->
+      <div class="chart-box" style="margin-top:16px;">
         <div class="chart-title">
-          <span>📅 ذروة الإنفاق اليومي (آخر 10 أيام نشطة)</span>
+          <span>📅 سجل وتيرة الصرف اليومية (آخر 10 أيام نشطة)</span>
           <span style="font-size:11px; font-weight:normal; color:var(--text-muted);">الأعلى باللون الأحمر</span>
         </div>
         <div class="bars-container" id="dailyBarsContainer"></div>
       </div>
 
-      <!-- Category Detailed Breakdown -->
-      <div class="section-wrap">
-        <div class="section-header">
-          <span>🏷️ التوزيع التفصيلي حسب الفئات</span>
-          <span style="font-size:11px; color:var(--text-sec);" id="statsTotalAmount">0 د.ع</span>
-        </div>
-        <div class="expenses-card-list" style="padding: 10px 14px;" id="statsCategoriesContainer"></div>
-      </div>
-
     </div>
 
-    <!-- TAB 3: SETTINGS & DATA MANAGEMENT -->
-    <div id="tab-settings" class="tab-pane">
+
+<div id="tab-settings" class="tab-pane">
       <div class="section-wrap">
         <div class="section-header">
-          <span>⚙️ إعدادات العملة والميزانية</span>
+          <span>⚙️ إعدادات العملة والميزانية والرصيد</span>
         </div>
         <div class="settings-group">
           <div class="settings-row">
@@ -1229,9 +2000,23 @@
           </div>
 
           <div class="settings-row">
-            <div class="settings-label">⚡ مبالغ سريعة</div>
+            <div class="settings-label">💼 رصيد البداية</div>
+            <div class="settings-input-wrap">
+              <input type="number" inputmode="decimal" id="initialBalanceInput" class="app-input" placeholder="رصيدك السابق قبل التسجيل (اختياري)" onchange="saveSettings()" />
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-label">⚡ مبالغ سريعة (مصاريف)</div>
             <div class="settings-input-wrap">
               <input type="text" id="chipsInput" class="app-input" placeholder="1000,5000,10000,25000,50000" onchange="saveSettings()" />
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-label">⚡ مبالغ سريعة (دخل)</div>
+            <div class="settings-input-wrap">
+              <input type="text" id="incomeChipsInput" class="app-input" placeholder="100000,250000,500000,1000000,2000000" onchange="saveSettings()" />
             </div>
           </div>
         </div>
@@ -1284,11 +2069,15 @@
 
   </main>
 
-  <!-- Bottom Navigation -->
+  <!-- Bottom Navigation Bar (4 TABS) -->
   <nav class="bottom-nav">
     <button class="nav-item active" onclick="switchTab('home', this)">
       <span class="nav-icon">🗂️</span>
-      <span>السجل</span>
+      <span>المصاريف</span>
+    </button>
+    <button class="nav-item income-tab-btn" onclick="switchTab('income', this)">
+      <span class="nav-icon">💵</span>
+      <span>الدخل والرصيد</span>
     </button>
     <button class="nav-item" onclick="switchTab('stats', this)">
       <span class="nav-icon">📊</span>
@@ -1309,25 +2098,39 @@
       currency: 'د.ع',
       budget: 0,
       monthStartDay: 1,
+      initialBalance: 0,
       theme: 'light',
       quickAmounts: [1000, 2500, 5000, 10000, 25000, 50000],
+      incomeQuickAmounts: [100000, 250000, 500000, 1000000, 2000000],
       categories: [
         { id: 'c1', name: 'طعام ومطاعم', emoji: '🍔', color: 'tag-orange', isEssential: false },
-        { id: 'c2', name: 'مواصلات', emoji: '🚕', color: 'tag-blue', isEssential: true },
-        { id: 'c3', name: 'تسوق وبقالة', emoji: '🛒', color: 'tag-green', isEssential: true },
-        { id: 'c4', name: 'فواتير وخدمات', emoji: '💡', color: 'tag-yellow', isEssential: true },
+        { id: 'c2', name: 'مواصلات وبنزين', emoji: '🚕', color: 'tag-blue', isEssential: true },
+        { id: 'c3', name: 'مسواك وبقالة', emoji: '🛒', color: 'tag-green', isEssential: true },
+        { id: 'c4', name: 'فواتير ومولدة', emoji: '💡', color: 'tag-yellow', isEssential: true },
         { id: 'c5', name: 'قهوة وسناك', emoji: '☕', color: 'tag-brown', isEssential: false },
-        { id: 'c6', name: 'صحة وصيدلية', emoji: '💊', color: 'tag-pink', isEssential: true },
-        { id: 'c7', name: 'ترفيه', emoji: '🎬', color: 'tag-purple', isEssential: false },
+        { id: 'c6', name: 'صحة وعلاج', emoji: '💊', color: 'tag-pink', isEssential: true },
+        { id: 'c7', name: 'ترفيه وتسوق', emoji: '🎬', color: 'tag-purple', isEssential: false },
         { id: 'c8', name: 'أخرى', emoji: '📦', color: 'tag-gray', isEssential: false }
       ],
-      expenses: []
+      incomeSources: [
+        { id: 's1', name: 'الراتب الأساسي', emoji: '💼', color: 'tag-green' },
+        { id: 's2', name: 'عمل حر وإضافي', emoji: '📈', color: 'tag-blue' },
+        { id: 's3', name: 'أرباح واستثمار', emoji: '🏢', color: 'tag-purple' },
+        { id: 's4', name: 'مكافأة أو هدية', emoji: '🎁', color: 'tag-yellow' },
+        { id: 's5', name: 'استرداد ديون', emoji: '🔄', color: 'tag-orange' },
+        { id: 's6', name: 'دخل آخر', emoji: '🏷️', color: 'tag-gray' }
+      ],
+      expenses: [],
+      incomes: []
     };
 
     let state = loadState();
     let selectedCatId = state.categories[0]?.id || 'c1';
+    let selectedIncomeSourceId = state.incomeSources[0]?.id || 's1';
     let currentFilter = 'today';
+    let currentIncomeFilter = 'month';
     let currentStatsPeriod = 'month';
+    let currentSimPercent = 20;
 
     function setupPwaIconAndManifest() {
       try {
@@ -1336,14 +2139,12 @@
         canvas.height = 512;
         const ctx = canvas.getContext('2d');
 
-        // Background Gradient
         const grad = ctx.createLinearGradient(0, 0, 512, 512);
         grad.addColorStop(0, '#2563EB');
-        grad.addColorStop(1, '#1D4ED8');
+        grad.addColorStop(1, '#10B981');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, 512, 512);
 
-        // Icon Graphic
         ctx.fillStyle = '#FFFFFF';
         ctx.font = 'bold 220px -apple-system, sans-serif';
         ctx.textAlign = 'center';
@@ -1358,7 +2159,7 @@
         if (appleIconEl) appleIconEl.href = iconDataUrl;
 
         const manifest = {
-          name: 'مصاريفي — تطبيق تتبع المصاريف الذكي',
+          name: 'مصاريفي — تطبيق تتبع المصاريف والدخل الذكي',
           short_name: 'مصاريفي',
           start_url: '.',
           display: 'standalone',
@@ -1383,6 +2184,10 @@
         if (!raw) return JSON.parse(JSON.stringify(defaultData));
         const parsed = { ...defaultData, ...JSON.parse(raw) };
         parsed.monthStartDay = parseInt(parsed.monthStartDay, 10) || 1;
+        parsed.initialBalance = parseFloat(parsed.initialBalance) || 0;
+        parsed.incomes = parsed.incomes || [];
+        parsed.incomeSources = parsed.incomeSources || defaultData.incomeSources;
+        parsed.incomeQuickAmounts = parsed.incomeQuickAmounts || defaultData.incomeQuickAmounts;
         parsed.categories = (parsed.categories || defaultData.categories).map((c, idx) => ({
           ...c,
           color: c.color || TAG_COLORS[idx % TAG_COLORS.length]
@@ -1405,131 +2210,6 @@
       const now = new Date();
       const offset = now.getTimezoneOffset() * 60000;
       return new Date(now - offset).toISOString().split('T')[0];
-    }
-
-    function init() {
-      setupPwaIconAndManifest();
-      applyTheme(state.theme || 'light');
-      document.getElementById('dateInput').value = getTodayISO();
-      document.getElementById('currencySelect').value = state.currency;
-      document.getElementById('budgetInput').value = state.budget || '';
-      document.getElementById('chipsInput').value = (state.quickAmounts || []).join(',');
-      populateMonthStartDays();
-      renderAll();
-    }
-
-    function applyTheme(theme) {
-      document.documentElement.setAttribute('data-theme', theme);
-      document.getElementById('themeIcon').textContent = theme === 'dark' ? '☀️' : '🌙';
-      const meta = document.getElementById('metaThemeColor');
-      if (meta) meta.setAttribute('content', theme === 'dark' ? '#121212' : '#FFFFFF');
-    }
-
-    function toggleTheme() {
-      state.theme = state.theme === 'dark' ? 'light' : 'dark';
-      applyTheme(state.theme);
-      saveState();
-    }
-
-    function renderQuickChips() {
-      const wrap = document.getElementById('quickChips');
-      wrap.innerHTML = (state.quickAmounts || []).map(amt => `
-        <button type="button" class="chip-btn" onclick="addQuickAmount(${amt})">+${formatNumber(amt)}</button>
-      `).join('');
-    }
-
-    function addQuickAmount(amt) {
-      const input = document.getElementById('amountInput');
-      const current = parseFloat(input.value) || 0;
-      input.value = current + amt;
-    }
-
-    function clearAmount() {
-      const input = document.getElementById('amountInput');
-      input.value = '';
-      input.focus();
-    }
-
-    function renderCategories() {
-      const grid = document.getElementById('categoryGrid');
-      if (!state.categories.find(c => c.id === selectedCatId) && state.categories.length) {
-        selectedCatId = state.categories[0].id;
-      }
-
-      grid.innerHTML = state.categories.map(cat => `
-        <span class="tag-pill ${cat.color || 'tag-gray'} ${cat.id === selectedCatId ? 'active' : ''}" onclick="selectCategory('${cat.id}')">
-          <span>${cat.emoji}</span>
-          <span>${cat.name}</span>
-        </span>
-      `).join('');
-
-      const manageList = document.getElementById('customCategoriesList');
-      manageList.innerHTML = state.categories.map(cat => `
-        <span class="tag-pill ${cat.color || 'tag-gray'}" style="padding:6px 12px;">
-          <span>${cat.emoji} ${cat.name}</span>
-          ${state.categories.length > 1 ? `<span onclick="deleteCategory('${cat.id}')" style="margin-right:8px; opacity:0.6; cursor:pointer;">✕</span>` : ''}
-        </span>
-      `).join('');
-    }
-
-    function selectCategory(id) {
-      selectedCatId = id;
-      renderCategories();
-    }
-
-    function addExpense() {
-      const amountEl = document.getElementById('amountInput');
-      const noteEl = document.getElementById('noteInput');
-      const dateEl = document.getElementById('dateInput');
-
-      const amount = parseFloat(amountEl.value);
-      if (!amount || amount <= 0) {
-        amountEl.focus();
-        showToast('يرجى كتابة مبلغ صحيح أكبر من صفر');
-        return;
-      }
-
-      const cat = state.categories.find(c => c.id === selectedCatId) || state.categories[0];
-      const newExp = {
-        id: 'exp_' + Date.now(),
-        amount,
-        catId: cat.id,
-        catName: cat.name,
-        catEmoji: cat.emoji,
-        catColor: cat.color || 'tag-gray',
-        note: noteEl.value.trim(),
-        date: dateEl.value || getTodayISO(),
-        createdAt: Date.now()
-      };
-
-      state.expenses.unshift(newExp);
-      saveState();
-
-      amountEl.value = '';
-      noteEl.value = '';
-      showToast('تم حفظ السجل بنجاح ✓');
-      renderAll();
-    }
-
-    function deleteExpense(id) {
-      state.expenses = state.expenses.filter(e => e.id !== id);
-      saveState();
-      renderAll();
-      showToast('تم حذف السجل');
-    }
-
-    function setFilter(filter, btn) {
-      currentFilter = filter;
-      btn.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderExpenses();
-    }
-
-    function setStatsPeriod(period, btn) {
-      currentStatsPeriod = period;
-      btn.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderStats();
     }
 
     function populateMonthStartDays() {
@@ -1615,6 +2295,216 @@
       return expDate >= startDate && expDate <= endDate;
     }
 
+    function init() {
+      setupPwaIconAndManifest();
+      applyTheme(state.theme || 'light');
+      document.getElementById('dateInput').value = getTodayISO();
+      document.getElementById('incomeDateInput').value = getTodayISO();
+      document.getElementById('currencySelect').value = state.currency;
+      document.getElementById('budgetInput').value = state.budget || '';
+      document.getElementById('initialBalanceInput').value = state.initialBalance || '';
+      document.getElementById('chipsInput').value = (state.quickAmounts || []).join(',');
+      document.getElementById('incomeChipsInput').value = (state.incomeQuickAmounts || []).join(',');
+      populateMonthStartDays();
+      renderAll();
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      document.getElementById('themeIcon').textContent = theme === 'dark' ? '☀️' : '🌙';
+      const meta = document.getElementById('metaThemeColor');
+      if (meta) meta.setAttribute('content', theme === 'dark' ? '#121212' : '#FFFFFF');
+    }
+
+    function toggleTheme() {
+      state.theme = state.theme === 'dark' ? 'light' : 'dark';
+      applyTheme(state.theme);
+      saveState();
+    }
+
+    /* --- EXPENSES FUNCTIONS --- */
+    function renderQuickChips() {
+      const wrap = document.getElementById('quickChips');
+      wrap.innerHTML = (state.quickAmounts || []).map(amt => `
+        <button type="button" class="chip-btn" onclick="addQuickAmount(${amt})">+${formatNumber(amt)}</button>
+      `).join('');
+    }
+
+    function addQuickAmount(amt) {
+      const input = document.getElementById('amountInput');
+      const current = parseFloat(input.value) || 0;
+      input.value = current + amt;
+    }
+
+    function clearAmount() {
+      const input = document.getElementById('amountInput');
+      input.value = '';
+      input.focus();
+    }
+
+    function renderCategories() {
+      const grid = document.getElementById('categoryGrid');
+      if (!state.categories.find(c => c.id === selectedCatId) && state.categories.length) {
+        selectedCatId = state.categories[0].id;
+      }
+
+      grid.innerHTML = state.categories.map(cat => `
+        <span class="tag-pill ${cat.color || 'tag-gray'} ${cat.id === selectedCatId ? 'active' : ''}" onclick="selectCategory('${cat.id}')">
+          <span>${cat.emoji}</span>
+          <span>${cat.name}</span>
+        </span>
+      `).join('');
+
+      const manageList = document.getElementById('customCategoriesList');
+      manageList.innerHTML = state.categories.map(cat => `
+        <span class="tag-pill ${cat.color || 'tag-gray'}" style="padding:6px 12px;">
+          <span>${cat.emoji} ${cat.name}</span>
+          ${state.categories.length > 1 ? `<span onclick="deleteCategory('${cat.id}')" style="margin-right:8px; opacity:0.6; cursor:pointer;">✕</span>` : ''}
+        </span>
+      `).join('');
+    }
+
+    function selectCategory(id) {
+      selectedCatId = id;
+      renderCategories();
+    }
+
+    function addExpense() {
+      const amountEl = document.getElementById('amountInput');
+      const noteEl = document.getElementById('noteInput');
+      const dateEl = document.getElementById('dateInput');
+
+      const amount = parseFloat(amountEl.value);
+      if (!amount || amount <= 0) {
+        amountEl.focus();
+        showToast('يرجى كتابة مبلغ صحيح أكبر من صفر');
+        return;
+      }
+
+      const cat = state.categories.find(c => c.id === selectedCatId) || state.categories[0];
+      const newExp = {
+        id: 'exp_' + Date.now(),
+        amount,
+        catId: cat.id,
+        catName: cat.name,
+        catEmoji: cat.emoji,
+        catColor: cat.color || 'tag-gray',
+        note: noteEl.value.trim(),
+        date: dateEl.value || getTodayISO(),
+        createdAt: Date.now()
+      };
+
+      state.expenses.unshift(newExp);
+      saveState();
+
+      amountEl.value = '';
+      noteEl.value = '';
+      showToast('تم حفظ المصروف بنجاح ✓');
+      renderAll();
+    }
+
+    function deleteExpense(id) {
+      state.expenses = state.expenses.filter(e => e.id !== id);
+      saveState();
+      renderAll();
+      showToast('تم حذف المصروف');
+    }
+
+    function setFilter(filter, btn) {
+      currentFilter = filter;
+      btn.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderExpenses();
+    }
+
+    /* --- INCOMES FUNCTIONS --- */
+    function renderIncomeQuickChips() {
+      const wrap = document.getElementById('incomeQuickChips');
+      wrap.innerHTML = (state.incomeQuickAmounts || []).map(amt => `
+        <button type="button" class="chip-btn income-chip" onclick="addIncomeQuickAmount(${amt})">+${formatNumber(amt)}</button>
+      `).join('');
+    }
+
+    function addIncomeQuickAmount(amt) {
+      const input = document.getElementById('incomeAmountInput');
+      const current = parseFloat(input.value) || 0;
+      input.value = current + amt;
+    }
+
+    function clearIncomeAmount() {
+      const input = document.getElementById('incomeAmountInput');
+      input.value = '';
+      input.focus();
+    }
+
+    function renderIncomeSources() {
+      const grid = document.getElementById('incomeSourceGrid');
+      if (!state.incomeSources.find(s => s.id === selectedIncomeSourceId) && state.incomeSources.length) {
+        selectedIncomeSourceId = state.incomeSources[0].id;
+      }
+
+      grid.innerHTML = state.incomeSources.map(src => `
+        <span class="tag-pill ${src.color || 'tag-green'} income-active ${src.id === selectedIncomeSourceId ? 'active' : ''}" onclick="selectIncomeSource('${src.id}')">
+          <span>${src.emoji}</span>
+          <span>${src.name}</span>
+        </span>
+      `).join('');
+    }
+
+    function selectIncomeSource(id) {
+      selectedIncomeSourceId = id;
+      renderIncomeSources();
+    }
+
+    function addIncome() {
+      const amountEl = document.getElementById('incomeAmountInput');
+      const noteEl = document.getElementById('incomeNoteInput');
+      const dateEl = document.getElementById('incomeDateInput');
+
+      const amount = parseFloat(amountEl.value);
+      if (!amount || amount <= 0) {
+        amountEl.focus();
+        showToast('يرجى كتابة مبلغ إيراد أكبر من صفر');
+        return;
+      }
+
+      const src = state.incomeSources.find(s => s.id === selectedIncomeSourceId) || state.incomeSources[0];
+      const newInc = {
+        id: 'inc_' + Date.now(),
+        amount,
+        sourceId: src.id,
+        sourceName: src.name,
+        sourceEmoji: src.emoji,
+        sourceColor: src.color || 'tag-green',
+        note: noteEl.value.trim(),
+        date: dateEl.value || getTodayISO(),
+        createdAt: Date.now()
+      };
+
+      state.incomes = state.incomes || [];
+      state.incomes.unshift(newInc);
+      saveState();
+
+      amountEl.value = '';
+      noteEl.value = '';
+      showToast('تم تسجيل المبلغ الداخل إلى المحفظة ✓');
+      renderAll();
+    }
+
+    function deleteIncome(id) {
+      state.incomes = (state.incomes || []).filter(i => i.id !== id);
+      saveState();
+      renderAll();
+      showToast('تم حذف دفعة الدخل');
+    }
+
+    function setIncomeFilter(filter, btn) {
+      currentIncomeFilter = filter;
+      btn.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderIncomes();
+    }
+
     function isThisWeek(dateStr) {
       const d = new Date(dateStr);
       const now = new Date();
@@ -1622,39 +2512,74 @@
       return diff >= -1 && diff <= 7;
     }
 
+    /* --- MASTER SUMMARY & BALANCE CALCULATIONS --- */
     function renderSummary() {
       const todayStr = getTodayISO();
       let todaySum = 0;
-      let monthSum = 0;
+      let monthExpensesSum = 0;
+      let allExpensesSum = 0;
 
       state.expenses.forEach(e => {
+        allExpensesSum += e.amount;
         if (e.date === todayStr) todaySum += e.amount;
-        if (isSameMonth(e.date)) monthSum += e.amount;
+        if (isSameMonth(e.date)) monthExpensesSum += e.amount;
       });
 
+      let monthIncomeSum = 0;
+      let allIncomeSum = 0;
+      (state.incomes || []).forEach(i => {
+        allIncomeSum += i.amount;
+        if (isSameMonth(i.date)) monthIncomeSum += i.amount;
+      });
+
+      // Total Current Net Balance = (All Incomes + Initial Balance) - All Expenses
+      const totalCurrentBalance = (allIncomeSum + (state.initialBalance || 0)) - allExpensesSum;
+      const monthNetFlow = monthIncomeSum - monthExpensesSum;
+
       document.getElementById('heroCurrencyBadge').textContent = state.currency;
+      document.getElementById('incomeCurrencyBadge').textContent = state.currency;
+
+      // Update Home Screen Top Cards
+      document.getElementById('homeCurrentBalance').textContent = `${formatNumber(totalCurrentBalance)} ${state.currency}`;
+      document.getElementById('homeCurrentBalance').style.color = totalCurrentBalance >= 0 ? 'var(--text)' : 'var(--danger)';
       document.getElementById('todayTotal').textContent = `${formatNumber(todaySum)} ${state.currency}`;
-      document.getElementById('monthTotal').textContent = `${formatNumber(monthSum)} ${state.currency}`;
+      document.getElementById('monthTotal').textContent = `${formatNumber(monthExpensesSum)} ${state.currency}`;
 
       const cycle = getFinancialCycle(new Date(), state.monthStartDay || 1);
       const cycleText = formatCycleRange(cycle.startDate, cycle.endDate);
       const monthSubEl = document.getElementById('monthCycleSub');
       if (monthSubEl) monthSubEl.textContent = `دورة: ${cycleText}`;
       const cycleExpEl = document.getElementById('cycleExplanation');
-      if (cycleExpEl) cycleExpEl.textContent = `الدورة الحالية: ${cycleText}`;
+      if (cycleExpEl) cycleExpEl.textContent = `الدورة المالية الحالية: ${cycleText}`;
 
+      // Update Incomes Screen Top Wallet Card
+      document.getElementById('walletBalanceBig').textContent = `${formatNumber(totalCurrentBalance)} ${state.currency}`;
+      document.getElementById('walletBalanceBig').style.color = totalCurrentBalance >= 0 ? 'var(--text)' : 'var(--danger)';
+      document.getElementById('walletInflowTotal').textContent = `+${formatNumber(monthIncomeSum)} ${state.currency}`;
+      document.getElementById('walletOutflowTotal').textContent = `-${formatNumber(monthExpensesSum)} ${state.currency}`;
+      
+      const netFlowEl = document.getElementById('walletNetFlow');
+      if (monthNetFlow >= 0) {
+        netFlowEl.textContent = `+${formatNumber(monthNetFlow)} ${state.currency} (وفر)`;
+        netFlowEl.style.color = 'var(--income-accent)';
+      } else {
+        netFlowEl.textContent = `${formatNumber(monthNetFlow)} ${state.currency} (سحب)`;
+        netFlowEl.style.color = 'var(--danger)';
+      }
+
+      // Budget Progress
       const budgetWrap = document.getElementById('budgetBarWrap');
       const remEl = document.getElementById('budgetRemaining');
 
       if (state.budget && state.budget > 0) {
         budgetWrap.style.display = 'block';
-        const rem = state.budget - monthSum;
+        const rem = state.budget - monthExpensesSum;
         remEl.textContent = rem >= 0
           ? `المتبقي: ${formatNumber(rem)} ${state.currency}`
-          : `تجاوزت الميزانية بـ ${formatNumber(Math.abs(rem))} ${state.currency}`;
+          : `تجاوزت بـ ${formatNumber(Math.abs(rem))} ${state.currency}`;
         
         remEl.style.color = rem >= 0 ? 'var(--text-sec)' : 'var(--danger)';
-        const pct = Math.min(100, Math.round((monthSum / state.budget) * 100));
+        const pct = Math.min(100, Math.round((monthExpensesSum / state.budget) * 100));
         document.getElementById('budgetPercent').textContent = `${pct}%`;
         const fill = document.getElementById('budgetFill');
         fill.style.width = `${pct}%`;
@@ -1672,6 +2597,7 @@
       return found?.color || 'tag-gray';
     }
 
+    /* --- EXPENSES LIST --- */
     function renderExpenses() {
       const list = document.getElementById('expenseList');
       const query = (document.getElementById('searchInput').value || '').trim().toLowerCase();
@@ -1720,11 +2646,154 @@
       }).join('');
     }
 
-    /* =================================================================
-       خوارزمية التحليل المالي والمستشار الذكي (FINANCIAL ADVISORY ENGINE)
+    /* --- INCOMES LIST & ANALYTICS --- */
+    function renderIncomes() {
+      const list = document.getElementById('incomeList');
+      const query = (document.getElementById('incomeSearchInput').value || '').trim().toLowerCase();
+      const now = new Date();
+
+      const filtered = (state.incomes || []).filter(inc => {
+        if (currentIncomeFilter === 'month' && !isSameMonth(inc.date)) return false;
+        if (currentIncomeFilter === '30days') {
+          const diffDays = (now - new Date(inc.date)) / (1000 * 60 * 60 * 24);
+          if (diffDays < 0 || diffDays > 30) return false;
+        }
+        if (query) {
+          const hay = `${inc.sourceName} ${inc.note} ${inc.amount}`.toLowerCase();
+          if (!hay.includes(query)) return false;
+        }
+        return true;
+      });
+
+      const sumFiltered = filtered.reduce((acc, item) => acc + item.amount, 0);
+      document.getElementById('filteredIncomeCount').textContent = `${filtered.length} دفعات`;
+      document.getElementById('filteredIncomeSum').textContent = `المجموع: +${formatNumber(sumFiltered)} ${state.currency}`;
+
+      if (!filtered.length) {
+        list.innerHTML = `<div class="empty-state">لا توجد مبالغ داخلة مسجلة في هذا العرض</div>`;
+      } else {
+        list.innerHTML = filtered.map(inc => `
+          <div class="expense-row">
+            <div class="expense-title-col">
+              <div>${inc.note ? inc.note : inc.sourceName}</div>
+              <span class="expense-date-sub">${inc.date}</span>
+            </div>
+            <div>
+              <span class="tag-pill ${inc.sourceColor || 'tag-green'}" style="font-size:11px; padding:3px 7px;">
+                <span>${inc.sourceEmoji || '💰'}</span>
+                <span>${inc.sourceName}</span>
+              </span>
+            </div>
+            <div class="expense-amount-col income-amount-text">+${formatNumber(inc.amount)} <small style="font-size:10px; opacity:0.8;">${state.currency}</small></div>
+            <div style="text-align:center;">
+              <button class="expense-del-btn" onclick="deleteIncome('${inc.id}')" title="حذف">✕</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Render Income Analytics Section
+      renderIncomeAnalytics();
+    }
+
+    function renderIncomeAnalytics() {
+      const cycle = getFinancialCycle(new Date(), state.monthStartDay || 1);
+      document.getElementById('incomeCycleLabel').textContent = `الدورة: ${formatCycleRange(cycle.startDate, cycle.endDate)}`;
+
+      let monthIncomeTotal = 0;
+      const sourceMap = {};
+
+      (state.incomes || []).forEach(inc => {
+        if (isSameMonth(inc.date)) {
+          monthIncomeTotal += inc.amount;
+          const k = inc.sourceName;
+          if (!sourceMap[k]) {
+            sourceMap[k] = {
+              name: inc.sourceName,
+              emoji: inc.sourceEmoji || '💰',
+              color: inc.sourceColor || 'tag-green',
+              sum: 0,
+              count: 0
+            };
+          }
+          sourceMap[k].sum += inc.amount;
+          sourceMap[k].count += 1;
+        }
+      });
+
+      let monthExpensesTotal = 0;
+      state.expenses.forEach(e => {
+        if (isSameMonth(e.date)) monthExpensesTotal += e.amount;
+      });
+
+      // Savings Rate
+      let savingsRate = 0;
+      if (monthIncomeTotal > 0) {
+        savingsRate = Math.max(0, Math.round(((monthIncomeTotal - monthExpensesTotal) / monthIncomeTotal) * 100));
+        document.getElementById('kpiSavingsRate').textContent = `${savingsRate}%`;
+        document.getElementById('kpiSavingsRate').style.color = savingsRate >= 20 ? 'var(--income-accent)' : savingsRate > 0 ? 'var(--warning)' : 'var(--danger)';
+      } else {
+        document.getElementById('kpiSavingsRate').textContent = '—';
+        document.getElementById('kpiSavingsRate').style.color = 'var(--text)';
+      }
+
+      // Coverage
+      let coveragePct = 0;
+      if (monthIncomeTotal > 0) {
+        coveragePct = Math.round((monthExpensesTotal / monthIncomeTotal) * 100);
+        document.getElementById('kpiIncomeCoverage').textContent = `${coveragePct}%`;
+        document.getElementById('kpiIncomeCoverage').style.color = coveragePct <= 80 ? 'var(--income-accent)' : coveragePct <= 100 ? 'var(--warning)' : 'var(--danger)';
+        document.getElementById('kpiIncomeCoverageSub').textContent = coveragePct > 100 ? 'المصاريف تجاوزت الدخل الشهري!' : 'من إجمالي الدخل المحصل';
+      } else {
+        document.getElementById('kpiIncomeCoverage').textContent = '—';
+        document.getElementById('kpiIncomeCoverageSub').textContent = 'سجل دخلاً لحساب التغطية';
+      }
+
+      // Inflow vs Outflow Ratio Bar
+      const totalFlow = monthIncomeTotal + monthExpensesTotal;
+      const inPct = totalFlow > 0 ? Math.round((monthIncomeTotal / totalFlow) * 100) : 50;
+      const outPct = totalFlow > 0 ? (100 - inPct) : 50;
+
+      document.getElementById('inflowRatioBar').style.width = `${inPct}%`;
+      document.getElementById('outflowRatioBar').style.width = `${outPct}%`;
+      document.getElementById('cashFlowRatioText').textContent = `${inPct}% داخل / ${outPct}% خارج`;
+      document.getElementById('ratioInflowVal').textContent = `${formatNumber(monthIncomeTotal)} ${state.currency}`;
+      document.getElementById('ratioOutflowVal').textContent = `${formatNumber(monthExpensesTotal)} ${state.currency}`;
+
+      // Income Sources Breakdown Bars
+      const sortedSources = Object.values(sourceMap).sort((a, b) => b.sum - a.sum);
+      const barsContainer = document.getElementById('incomeSourcesBars');
+      document.getElementById('incomeSourcesSum').textContent = `إجمالي الدخل: ${formatNumber(monthIncomeTotal)} ${state.currency}`;
+
+      if (sortedSources.length) {
+        barsContainer.innerHTML = sortedSources.map(s => {
+          const pct = monthIncomeTotal > 0 ? Math.round((s.sum / monthIncomeTotal) * 100) : 0;
+          return `
+            <div class="cat-rank-item">
+              <div class="cat-rank-top">
+                <span class="tag-pill ${s.color}">
+                  <span>${s.emoji}</span>
+                  <span>${s.name}</span>
+                  <small style="opacity:0.75; font-size:10px;">(${s.count} دفعة)</small>
+                </span>
+                <span style="font-weight:700; color:var(--income-accent);">+${formatNumber(s.sum)} ${state.currency} <span style="font-size:11px; color:var(--text-sec); font-weight:normal;">(${pct}%)</span></span>
+              </div>
+              <div class="app-progress-bar">
+                <div class="app-progress-fill" style="width:${pct}%; background:var(--income-accent);"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        barsContainer.innerHTML = `<div class="empty-state" style="padding:16px 0;">لم تسجل مبالغ داخلة في هذه الدورة حتى الآن</div>`;
+      }
+    }
+
+        /* =================================================================
+       خوارزمية التحليل المالي الذكي الشامل (الدخل والرصيد والمصاريف)
+       HOLISTIC FINANCIAL INTELLIGENCE & WEALTH ENGINE
        ================================================================= */
-    function runFinancialAlgorithm(periodExpenses, periodTotal) {
-      const insights = [];
+    function runHolisticFinancialAlgorithm(periodExpenses, periodExpenseTotal, periodIncomes, periodIncomeTotal, currentBalance) {
       const now = new Date();
       const { startDate, endDate } = getFinancialCycle(now, state.monthStartDay || 1);
       const oneDayMs = 1000 * 60 * 60 * 24;
@@ -1733,147 +2802,250 @@
       const daysRemaining = Math.max(1, totalDaysInCycle - daysElapsed + 1);
       const curr = state.currency;
 
-      // 1. حساب المتوسط والتوقعات الشهرية
-      const currentMonthExpenses = state.expenses.filter(e => isSameMonth(e.date));
-      const currentMonthTotal = currentMonthExpenses.reduce((sum, e) => sum + e.amount, 0);
-      const dailyAvg = daysElapsed > 0 ? (currentMonthTotal / daysElapsed) : 0;
-      const monthProjection = dailyAvg * totalDaysInCycle;
-
-      // 2. تحليل سقف الميزانية وسرعة الحرق (Budget & Burn-rate Analysis)
-      if (state.budget && state.budget > 0) {
-        const budgetRemaining = state.budget - currentMonthTotal;
-        const budgetUsagePct = (currentMonthTotal / state.budget) * 100;
-        const safeDailyLimit = budgetRemaining > 0 ? Math.floor(budgetRemaining / daysRemaining) : 0;
-
-        if (budgetRemaining < 0) {
-          insights.push({
-            type: 'danger',
-            icon: '🚨',
-            title: 'تجاوز الميزانية الشهرية!',
-            desc: `لقد تخطيت سقف الميزانية بمقدار ${formatNumber(Math.abs(budgetRemaining))} ${curr}. يُنصح بشدة بإيقاف المشتريات الكمالية وحصر الصرف على الضروريات القصوى فقط لما تبقى من الشهر.`
-          });
-        } else if (budgetUsagePct >= 85) {
-          insights.push({
-            type: 'warning',
-            icon: '⚠️',
-            title: `الميزانية شارفت على النفاد (${Math.round(budgetUsagePct)}%)`,
-            desc: `المتبقي لك فقط ${formatNumber(budgetRemaining)} ${curr} للأيام الـ ${daysRemaining} القادمة. للحفاظ على الميزانية، لا تتجاوز ${formatNumber(safeDailyLimit)} ${curr} يومياً.`
-          });
-        } else if (monthProjection > state.budget * 1.05) {
-          insights.push({
-            type: 'warning',
-            icon: '📉',
-            title: 'تحذير من وتيرة الإنفاق المتصاعدة',
-            desc: `بناءً على متوسط صرفك الحالي (${formatNumber(Math.round(dailyAvg))} ${curr}/يوم)، من المتوقع أن يصل إجمالي الشهر إلى ${formatNumber(Math.round(monthProjection))} ${curr} متجاوزاً ميزانيتك. يُقترح خفض الصرف اليومي إلى ${formatNumber(safeDailyLimit)} ${curr}.`
-          });
-        } else {
-          insights.push({
-            type: 'success',
-            icon: '🛡️',
-            title: 'أداء مالي منضبط وممتاز',
-            desc: `وتيرة إنفاقك متزنة جداً ضمن سقف الميزانية. التوفير المتوقع بنهاية الشهر يقارب ${formatNumber(Math.round(state.budget - monthProjection))} ${curr}. يمكنك تخصيص هذا الفائض لصندوق الطوارئ أو الادخار.`
-          });
-        }
+      // صافي التدفق المالي ومعدل الادخار
+      const netCashFlow = periodIncomeTotal - periodExpenseTotal;
+      const savingsRate = periodIncomeTotal > 0 ? Math.round((netCashFlow / periodIncomeTotal) * 100) : 0;
+      
+      // وتيرة الصرف والتوقعات
+      const dailyExpenseAvg = daysElapsed > 0 ? (periodExpenseTotal / daysElapsed) : 0;
+      const dailyIncomeAvg = daysElapsed > 0 ? (periodIncomeTotal / daysElapsed) : 0;
+      const projectedExpensesEnd = dailyExpenseAvg * totalDaysInCycle;
+      
+      // التوقع للرصيد عند نهاية الدورة (الرصيد الحالي ناقص الصرف اليومي المتوقع لما تبقى من الأيام)
+      const projectedBalanceEnd = currentBalance - (dailyExpenseAvg * daysRemaining);
+      
+      // أمان السيولة (Runway): كم يوماً يكفي الرصيد الحالي إذا انقطع الدخل
+      let runwayDays = 0;
+      if (dailyExpenseAvg > 0) {
+        runwayDays = currentBalance > 0 ? Math.floor(currentBalance / dailyExpenseAvg) : 0;
       } else {
+        runwayDays = currentBalance > 0 ? 999 : 0;
+      }
+
+      // السقف اليومي الآمن الموصى به
+      let safeDailyLimit = 0;
+      if (state.budget && state.budget > 0) {
+        const remBudget = state.budget - periodExpenseTotal;
+        safeDailyLimit = remBudget > 0 ? Math.floor(remBudget / daysRemaining) : 0;
+      } else if (periodIncomeTotal > 0) {
+        const remIncome = periodIncomeTotal - periodExpenseTotal;
+        safeDailyLimit = remIncome > 0 ? Math.floor(remIncome / daysRemaining) : 0;
+      } else if (currentBalance > 0) {
+        safeDailyLimit = Math.floor(currentBalance / daysRemaining);
+      }
+
+      // تشخيص الوضع المالي الشامل (Holistic Diagnostic Tiers)
+      let healthStatus = 'STABLE';
+      let healthScore = 80;
+      let statusBadge = 'وضع متزن ومستقر';
+      let statusDot = '🟢';
+      let heroHeading = 'المحفظة في حالة توازن واستقرار';
+      let heroSummary = 'دخلك يغطي نفقاتك بنجاح، ورصيدك الحالي يوفر لك أماناً مالياً متزناً.';
+      let themeClass = 'status-stable';
+      const insights = [];
+
+      if (periodIncomeTotal === 0 && periodExpenseTotal > 0) {
+        healthStatus = 'UNBUDGETED';
+        healthScore = 65;
+        statusBadge = '⚪ وضع تتبع النفقات';
+        statusDot = '⚪';
+        heroHeading = 'تم تسجيل مصاريف دون تسجيل دخل';
+        heroSummary = `بلغ إجمالي مصاريف هذه الدورة ${formatNumber(periodExpenseTotal)} ${curr}. ننصحك بتسجيل مبالغك الداخلة في قسم (الدخل والرصيد) لاحتساب صافي التدفق والادخار.`;
+        themeClass = 'status-unbudgeted';
+
         insights.push({
           type: 'info',
-          icon: '💡',
-          title: 'حدد سقف ميزانية شهري',
-          desc: 'لم تقم بتعيين سقف للميزانية في صفحة الإعدادات. تفعيل الميزانية يمكّن الخوارزمية من حساب سقف الصرف اليومي الآمن ومراقبة وتيرة الاستهلاك بدقة.'
+          icon: '📥',
+          tag: 'خطوة مقترحة',
+          title: 'سجل راتبك أو إيراداتك في قسم الدخل',
+          desc: 'تسجيل المبالغ الداخلة يمكنك من معرفة نسبة ما توفره من دخلك بالضبط ورصد هل محفظتك في نمو أم تراجع.'
+        });
+
+      } else if (currentBalance <= 0 || (netCashFlow < 0 && runwayDays < 5)) {
+        healthStatus = 'CRITICAL';
+        healthScore = Math.max(10, Math.round(25 + (savingsRate * 0.5)));
+        statusBadge = '🔴 عجز حرج: خطر نفاد الرصيد';
+        statusDot = '🔴';
+        heroHeading = 'تحذير عاجل: السيولة المالية في خطر!';
+        heroSummary = `رصيدك الحالي (${formatNumber(currentBalance)} ${curr}) مستنزف أو شارف على النفاد قبل موعد الراتب القادم. أمان السيولة يغطي ${runwayDays} أيام فقط.`;
+        themeClass = 'status-deficit';
+
+        insights.push({
+          type: 'danger',
+          icon: '🛑',
+          tag: 'خطة طوارئ',
+          title: 'تجميد المصاريف غير الضرورية تماماً',
+          desc: `المصاريف تجاوزت الدخل بفارق ${formatNumber(Math.abs(netCashFlow))} ${curr}. أوقف فوراً أي شراء كمالي، واقصر مدفوعاتك على الطعام والدواء الأساسي فقط.`
+        });
+
+        insights.push({
+          type: 'warning',
+          icon: '⏳',
+          tag: 'أمان السيولة',
+          title: `الرصيد يكفي لمدة ${runwayDays} أيام فقط`,
+          desc: `بالمعدل الحالي ستنفد السيولة قبل موعد الدورة القادمة. يجب خفض الصرف اليومي فوراً إلى ${formatNumber(safeDailyLimit)} ${curr} يومياً كحد أقصى.`
+        });
+
+      } else if (netCashFlow < 0) {
+        healthStatus = 'BLEEDING';
+        healthScore = Math.max(35, Math.round(55 + (savingsRate * 0.5)));
+        statusBadge = '🟠 نزيف سيولة: المصاريف تفوق الدخل';
+        statusDot = '🟠';
+        heroHeading = 'السحب من الرصيد السابق والمدخرات';
+        heroSummary = `مصاريفك (${formatNumber(periodExpenseTotal)} ${curr}) تجاوزت دخلك المحصل في هذه الدورة (${formatNumber(periodIncomeTotal)} ${curr}). أنت تستهلك من مدخراتك السابقة.`;
+        themeClass = 'status-critical';
+
+        insights.push({
+          type: 'warning',
+          icon: '📉',
+          tag: 'عجز تدفق نقدي',
+          title: `عجز تدفق بقيمة ${formatNumber(Math.abs(netCashFlow))} ${curr}`,
+          desc: `على الرغم من وجود رصيد متبقي، فإن نمط الصرف يسحب من مدخراتك بدلاً من تنميتها. خفض الصرف اليومي بنسبة 20% سيعيد محفظتك إلى خانة الفائض.`
+        });
+
+        insights.push({
+          type: 'info',
+          icon: '🎯',
+          tag: 'سقف الأمان',
+          title: `سقف الصرف اليومي الآمن: ${formatNumber(safeDailyLimit)} ${curr}`,
+          desc: 'الالتزام بهذا السقف للأيام المتبقية سيوقف استنزاف الرصيد ويضمن وصولك لموعد الراتب بأمان.'
+        });
+
+      } else if (savingsRate >= 30 && currentBalance > 0) {
+        healthStatus = 'THRIVING';
+        healthScore = Math.min(99, Math.round(85 + (savingsRate * 0.2)));
+        statusBadge = '🟢 نمو مالي وفائض ادخاري ممتاز';
+        statusDot = '🟢';
+        heroHeading = 'أداء مالي استثنائي وتدفق إيجابي قوي';
+        heroSummary = `أنت توفر ${savingsRate}% من إجمالي دخلك في هذه الدورة. الرصيد ينمو بصحة ممتازة والفائض المتوقع في نهاية الدورة يبلغ ${formatNumber(Math.round(projectedBalanceEnd))} ${curr}.`;
+        themeClass = 'status-thriving';
+
+        insights.push({
+          type: 'success',
+          icon: '🌟',
+          tag: 'استثمار الفائض',
+          title: `وفرت ${formatNumber(netCashFlow)} ${curr} حتى الآن (${savingsRate}%)`,
+          desc: 'محفظتك تحقق فائضاً رائعاً! استغل هذا التوفير لتحويل جزء منه لصندوق طوارئ ذهبي أو وديعة ادخارية تضمن لك استقلالاً مالياً مستقبلياً.'
+        });
+
+        insights.push({
+          type: 'purple',
+          icon: '🚀',
+          tag: 'تنمية الثروة',
+          title: 'قاعدة 50/30/20 في صالحك',
+          desc: 'تجاوزت حاجز الـ 20% ادخار الموصى به عالمياً. استمر على نفس النمط لتعزيز أمان السيولة الذي يغطي حالياً أكثر من ' + runwayDays + ' يوماً.'
+        });
+
+      } else if (savingsRate < 15 && periodIncomeTotal > 0) {
+        healthStatus = 'CAUTION';
+        healthScore = Math.max(50, Math.round(65 + savingsRate));
+        statusBadge = '🟡 وضع حذر: هامش توفير ضئيل';
+        statusDot = '🟡';
+        heroHeading = 'المصاريف تلتهم معظم الدخل المحصل';
+        heroSummary = `المصاريف تستهلك ${100 - savingsRate}% من دخلك. المتبقي كفائض هو ${savingsRate}% فقط. هامش الأمان بحاجة إلى تعزيز.`;
+        themeClass = 'status-caution';
+
+        insights.push({
+          type: 'warning',
+          icon: '⚖️',
+          tag: 'تعزيز الفائض',
+          title: 'رفع نسبة الادخار إلى 20%',
+          desc: `المتبقي الصافي هو ${formatNumber(netCashFlow)} ${curr}. حاول تقليص المشتريات الكمالية غير العاجلة لرفع نسبة الادخار وحماية الرصيد.`
+        });
+
+      } else {
+        healthStatus = 'STABLE';
+        healthScore = 85;
+        statusBadge = '🔵 وضع مستقر ومنضبط';
+        statusDot = '🔵';
+        heroHeading = 'توازن وانضباط في التدفق المالي';
+        heroSummary = `أنت توفر ${savingsRate}% من دخلك، ورصيدك يغطي احتياجاتك لـ ${runwayDays} يوماً قادمة. حافظ على نفس الوتيرة.`;
+        themeClass = 'status-stable';
+
+        insights.push({
+          type: 'success',
+          icon: '🛡️',
+          tag: 'انضباط مالي',
+          title: `فائض شهري مستقر: +${formatNumber(netCashFlow)} ${curr}`,
+          desc: `الصرف اليومي الآمن الموصى به هو ${formatNumber(safeDailyLimit)} ${curr}. البقاء عند هذا المستوى يضمن نهاية دورة شهرية مريحة جداً.`
         });
       }
 
-      // 3. تحليل تركز الإنفاق (Category Concentration - 80/20 Rule)
+      // تحليل تركز المصاريف الأعلى
       const catTotals = {};
       periodExpenses.forEach(e => {
         catTotals[e.catName] = (catTotals[e.catName] || 0) + e.amount;
       });
-
       const sortedCats = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
-      if (sortedCats.length && periodTotal > 0) {
-        const [topName, topAmount] = sortedCats[0];
-        const topPct = Math.round((topAmount / periodTotal) * 100);
-
-        if (topPct >= 35) {
-          let advice = `تستحوذ فئة (${topName}) على ${topPct}% من إجمالي مصروفاتك بمبلغ ${formatNumber(topAmount)} ${curr}.`;
-          
-          if (topName.includes('طعام') || topName.includes('مطاعم')) {
-            advice += ' يُعد إعداد الوجبات منزلياً وتقليل طلبات التوصيل الجاهزة وسيلة فعالة لتوفير ما يصل إلى 30% من هذه النفقات.';
-          } else if (topName.includes('قهوة') || topName.includes('سناك')) {
-            advice += ' تكرار شراء القهوة الجاهزة يومياً يمثل تسرباً مالياً ملحوظاً. تحضير القهوة في العمل أو المنزل يوفر مبالغ ملموسة شهرياً.';
-          } else if (topName.includes('تسوق') || topName.includes('بقالة')) {
-            advice += ' جرّب كتابة قائمة مشتريات محددة مسبقاً قبل الذهاب للمتجر وتجنب الشراء الاندفاعي للحفاظ على الفائض.';
-          } else if (topName.includes('مواصلات') || topName.includes('تكسي')) {
-            advice += ' دمج المشاوير أو استخدام وسائل نقل مشتركة يخفض كلفة التنقل بشكل ملموس.';
-          } else {
-            advice += ' تركز ثلث المصاريف في فئة واحدة يستدعي إعادة تقييم هذه النفقات والبحث عن بدائل توفير.';
-          }
-
+      let topCatName = '—';
+      let topCatPct = 0;
+      if (sortedCats.length && periodExpenseTotal > 0) {
+        topCatName = sortedCats[0][0];
+        topCatPct = Math.round((sortedCats[0][1] / periodExpenseTotal) * 100);
+        if (topCatPct >= 35) {
           insights.push({
             type: 'warning',
             icon: '🎯',
-            title: `تركز نفقات عالٍ في (${topName})`,
-            desc: advice
+            tag: 'تركز النفقات',
+            title: `فئة (${topCatName}) تستحوذ على ${topCatPct}% من مصروفاتك`,
+            desc: `بلغت نفقات ${topCatName} ما قيمته ${formatNumber(sortedCats[0][1])} ${curr}. خفض 20% في هذا البند يوفر لك شهرياً ${formatNumber(Math.round(sortedCats[0][1] * 0.2))} ${curr} مباشرة إلى رصيدك.`
           });
         }
       }
 
-      // 4. رصد العمليات الفردية الكبيرة غير المعتادة (Spike & Anomaly Detection)
-      if (periodExpenses.length > 2) {
-        const avgExp = periodTotal / periodExpenses.length;
-        const hugeExpense = periodExpenses.find(e => e.amount >= avgExp * 3.5 && e.amount > 10000);
-        if (hugeExpense) {
-          insights.push({
-            type: 'info',
-            icon: '🔍',
-            title: 'رصد مصروف استثنائي كبير',
-            desc: `تم تسجيل عملية استثنائية بقيمة ${formatNumber(hugeExpense.amount)} ${curr} (${hugeExpense.note || hugeExpense.catName}). إذا كانت هذه نفقة دورية أو سنوية، يُفضل تقسيمها ذهنياً على أشهر السنة حتى لا تضغط ميزانيتك الشهرية الحالية.`
-          });
-        }
-      }
+      // رادار التسربات الخفية (المبالغ الصغيرة المتكررة <= 10,000 د.ع)
+      const microExpenses = periodExpenses.filter(e => e.amount > 0 && e.amount <= 10000);
+      const microSum = microExpenses.reduce((sum, e) => sum + e.amount, 0);
+      const microCount = microExpenses.length;
+      const microPctOfIncome = periodIncomeTotal > 0 ? Math.round((microSum / periodIncomeTotal) * 100) : (periodExpenseTotal > 0 ? Math.round((microSum / periodExpenseTotal) * 100) : 0);
 
-      // 5. تحليل قاعدة 50/30/20 (الضروريات مقابل الرغبات)
+      // تحليل الضروريات مقابل الكماليات
       let needsSum = 0;
       let wantsSum = 0;
-      const essentialCategories = ['مواصلات', 'فواتير وخدمات', 'صحة وصيدلية', 'تسوق وبقالة'];
-
+      const essentialCats = ['مواصلات', 'فواتير', 'مولدة', 'صحة', 'علاج', 'مسواك', 'بقالة'];
       periodExpenses.forEach(e => {
-        const isNeed = essentialCategories.some(cat => e.catName.includes(cat));
+        const isNeed = essentialCats.some(cat => e.catName.includes(cat));
         if (isNeed) needsSum += e.amount;
         else wantsSum += e.amount;
       });
 
-      if (periodTotal > 0) {
-        const wantsPct = Math.round((wantsSum / periodTotal) * 100);
-        if (wantsPct > 45) {
-          insights.push({
-            type: 'warning',
-            icon: '⚖️',
-            title: 'ارتفاع نسبة المصاريف الكمالية',
-            desc: `تشكل الرغبات والكماليات (المطاعم، المقاهي، الترفيه) حوالي ${wantsPct}% من مصروفاتك. القاعدة المالية المتوازنة تنصح ألا تتجاوز الكماليات 30% لضمان ادخار سليم.`
-          });
-        }
-      }
-
       return {
+        healthStatus,
+        healthScore,
+        statusBadge,
+        statusDot,
+        heroHeading,
+        heroSummary,
+        themeClass,
+        netCashFlow,
+        savingsRate,
+        dailyExpenseAvg,
+        dailyIncomeAvg,
+        projectedExpensesEnd,
+        projectedBalanceEnd,
+        runwayDays,
+        safeDailyLimit,
+        daysElapsed,
+        daysRemaining,
+        totalDaysInCycle,
+        topCatName,
+        topCatPct,
         insights,
-        dailyAvg,
-        monthProjection,
+        microSum,
+        microCount,
+        microPctOfIncome,
         needsSum,
         wantsSum
       };
     }
 
+    /* --- MASTER RENDER FUNCTION FOR HOLISTIC ANALYTICS --- */
     function renderStats() {
       const now = new Date();
       const { startDate, endDate } = getFinancialCycle(now, state.monthStartDay || 1);
-      const oneDayMs = 1000 * 60 * 60 * 24;
-      const totalDaysInCycle = Math.round((endDate.getTime() - startDate.getTime()) / oneDayMs) + 1;
-      const daysElapsed = Math.max(1, Math.min(totalDaysInCycle, Math.floor((now.getTime() - startDate.getTime()) / oneDayMs) + 1));
-      const daysRemaining = Math.max(1, totalDaysInCycle - daysElapsed + 1);
 
-      // تصفية المصاريف حسب الفترة المحددة
-      const filtered = state.expenses.filter(e => {
+      // فلترة المصاريف حسب الفترة
+      const filteredExpenses = state.expenses.filter(e => {
         if (currentStatsPeriod === 'month') return isSameMonth(e.date);
         if (currentStatsPeriod === '30days') {
           const diffDays = (now - new Date(e.date)) / (1000 * 60 * 60 * 24);
@@ -1882,36 +3054,106 @@
         return true;
       });
 
-      const total = filtered.reduce((sum, e) => sum + e.amount, 0);
-      document.getElementById('statsTotalAmount').textContent = `${formatNumber(total)} ${state.currency}`;
+      // فلترة الدخل حسب الفترة
+      const filteredIncomes = (state.incomes || []).filter(inc => {
+        if (currentStatsPeriod === 'month') return isSameMonth(inc.date);
+        if (currentStatsPeriod === '30days') {
+          const diffDays = (now - new Date(inc.date)) / (1000 * 60 * 60 * 24);
+          return diffDays >= 0 && diffDays <= 30;
+        }
+        return true;
+      });
 
-      // تشغيل الخوارزمية
-      const analysis = runFinancialAlgorithm(filtered, total);
+      const totalExpenses = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
+      const totalIncomes = filteredIncomes.reduce((sum, i) => sum + i.amount, 0);
 
-      // تحديث مؤشرات KPI
-      document.getElementById('kpiDailyAvg').textContent = `${formatNumber(Math.round(analysis.dailyAvg))} ${state.currency}`;
-      document.getElementById('kpiMonthProjection').textContent = `${formatNumber(Math.round(analysis.monthProjection))} ${state.currency}`;
+      // حساب الرصيد الصافي الفعلي الشامل
+      let allExpSum = 0;
+      state.expenses.forEach(e => allExpSum += e.amount);
+      let allIncSum = 0;
+      (state.incomes || []).forEach(i => allIncSum += i.amount);
+      const currentBalance = (allIncSum + (state.initialBalance || 0)) - allExpSum;
 
-      if (state.budget && state.budget > 0) {
-        const rem = state.budget - total;
-        const safeDaily = rem > 0 ? Math.floor(rem / daysRemaining) : 0;
-        document.getElementById('kpiSafeDaily').textContent = `${formatNumber(safeDaily)} ${state.currency}`;
-        document.getElementById('kpiSafeDailySub').textContent = `للـ ${daysRemaining} يوماً المتبقية`;
+      // تشغيل الخوارزمية الشاملة
+      const analysis = runHolisticFinancialAlgorithm(filteredExpenses, totalExpenses, filteredIncomes, totalIncomes, currentBalance);
+
+      // 1. تحديث بطاقة التشخيص المالي والمحفظة (Hero Banner)
+      const heroEl = document.getElementById('healthStatusHero');
+      heroEl.className = `health-status-hero ${analysis.themeClass}`;
+      document.getElementById('healthStatusDot').textContent = analysis.statusDot;
+      document.getElementById('healthStatusTitle').textContent = analysis.statusBadge;
+      document.getElementById('healthScoreValue').textContent = `${analysis.healthScore}%`;
+      document.getElementById('healthHeroHeading').textContent = analysis.heroHeading;
+      document.getElementById('healthHeroSummary').textContent = analysis.heroSummary;
+
+      const scoreFill = document.getElementById('healthScoreFill');
+      scoreFill.style.width = `${analysis.healthScore}%`;
+      scoreFill.style.background = analysis.healthScore >= 80 ? 'var(--income-accent)' : analysis.healthScore >= 60 ? 'var(--accent)' : analysis.healthScore >= 40 ? 'var(--warning)' : 'var(--danger)';
+
+      // 2. تحديث لوحة المؤشرات الثلاثية الكبرى (The Three Pillars)
+      document.getElementById('pillarIncome').textContent = `+${formatNumber(totalIncomes)} ${state.currency}`;
+      document.getElementById('pillarIncomeSub').textContent = `متوسط: +${formatNumber(Math.round(analysis.dailyIncomeAvg))} ${state.currency} / يوم`;
+
+      document.getElementById('pillarExpense').textContent = `-${formatNumber(totalExpenses)} ${state.currency}`;
+      document.getElementById('pillarExpenseSub').textContent = `متوسط: -${formatNumber(Math.round(analysis.dailyExpenseAvg))} ${state.currency} / يوم`;
+
+      document.getElementById('pillarBalance').textContent = `${formatNumber(currentBalance)} ${state.currency}`;
+      document.getElementById('pillarBalance').style.color = currentBalance >= 0 ? 'var(--text)' : 'var(--danger)';
+
+      const netFlowEl = document.getElementById('pillarNetFlow');
+      if (analysis.netCashFlow >= 0) {
+        netFlowEl.textContent = `+${formatNumber(analysis.netCashFlow)} ${state.currency}`;
+        netFlowEl.style.color = 'var(--income-accent)';
+        document.getElementById('pillarNetFlowSub').textContent = `معدل التوفير الصافي: ${analysis.savingsRate}%`;
       } else {
-        document.getElementById('kpiSafeDaily').textContent = '—';
-        document.getElementById('kpiSafeDailySub').textContent = 'الميزانية غير محددة';
+        netFlowEl.textContent = `${formatNumber(analysis.netCashFlow)} ${state.currency}`;
+        netFlowEl.style.color = 'var(--danger)';
+        document.getElementById('pillarNetFlowSub').textContent = 'عجز تدفق (سحب من الرصيد)';
       }
 
-      // رسم بطاقات المستشار المالي (Insights Cards)
-      const insightsListEl = document.getElementById('insightsList');
-      document.getElementById('insightsCountBadge').textContent = `${analysis.insights.length} ملاحظات ذكية`;
+      // 3. تحديث شريط تخصيص التدفق المالي (Flow Allocation Bar)
+      let expFlowPct = 50;
+      let savFlowPct = 50;
+      if (totalIncomes > 0) {
+        expFlowPct = Math.min(100, Math.round((totalExpenses / totalIncomes) * 100));
+        savFlowPct = Math.max(0, 100 - expFlowPct);
+      } else if (totalExpenses > 0) {
+        expFlowPct = 100;
+        savFlowPct = 0;
+      }
+      document.getElementById('flowExpenseFill').style.width = `${expFlowPct}%`;
+      document.getElementById('flowSavingsFill').style.width = `${savFlowPct}%`;
+      document.getElementById('flowRatioBadge').textContent = `${expFlowPct}% مصاريف / ${savFlowPct}% توفير`;
+      document.getElementById('flowExpenseVal').textContent = `${formatNumber(totalExpenses)} ${state.currency}`;
+      document.getElementById('flowSavingsVal').textContent = `${formatNumber(Math.max(0, analysis.netCashFlow))} ${state.currency}`;
 
+      // 4. تحديث بطاقة التوقعات الشاملة
+      document.getElementById('forecastCycleDates').textContent = `الدورة: ${formatCycleRange(startDate, endDate)}`;
+      document.getElementById('fcProjectedBalance').textContent = `${formatNumber(Math.round(analysis.projectedBalanceEnd))} ${state.currency}`;
+      document.getElementById('fcProjectedBalance').style.color = analysis.projectedBalanceEnd >= 0 ? 'var(--income-accent)' : 'var(--danger)';
+      document.getElementById('fcBalanceDiffSub').textContent = analysis.projectedBalanceEnd >= currentBalance ? 'نمو في المحفظة ✓' : 'تراجع في الرصيد المتاح';
+
+      document.getElementById('fcRunwayDays').textContent = analysis.runwayDays > 365 ? '+1 سنة' : `${analysis.runwayDays} يوماً`;
+      document.getElementById('fcRunwaySub').textContent = analysis.runwayDays >= analysis.daysRemaining ? 'يغطي كامل الدورة بأمان ✓' : `عجز قبل الراتب بـ ${Math.max(1, analysis.daysRemaining - analysis.runwayDays)} يوم!`;
+
+      document.getElementById('fcHolisticDaily').textContent = `${formatNumber(analysis.safeDailyLimit)} ${state.currency}`;
+      document.getElementById('fcHolisticDailySub').textContent = `للـ ${analysis.daysRemaining} يوماً المتبقية`;
+
+      document.getElementById('fcProjectedExpense').textContent = `${formatNumber(Math.round(analysis.projectedExpensesEnd))} ${state.currency}`;
+      document.getElementById('fcExpenseDiffSub').textContent = totalIncomes > 0 ? (analysis.projectedExpensesEnd <= totalIncomes ? 'أقل من الدخل المتوقع ✓' : 'يتجاوز إجمالي الدخل!') : 'بناءً على الوتيرة الحالية';
+
+      // 5. تحديث قائمة الملاحظات والتوصيات
+      const insightsListEl = document.getElementById('insightsList');
+      document.getElementById('insightsCountBadge').textContent = `${analysis.insights.length} توصيات نشطة`;
       if (analysis.insights.length) {
         insightsListEl.innerHTML = analysis.insights.map(item => `
           <div class="insight-card ${item.type}">
             <div class="insight-icon">${item.icon}</div>
             <div class="insight-content">
-              <div class="insight-heading">${item.title}</div>
+              <div class="insight-heading">
+                <span>${item.title}</span>
+                ${item.tag ? `<span class="insight-tag">${item.tag}</span>` : ''}
+              </div>
               <div class="insight-desc">${item.desc}</div>
             </div>
           </div>
@@ -1921,25 +3163,45 @@
           <div class="insight-card success">
             <div class="insight-icon">✨</div>
             <div class="insight-content">
-              <div class="insight-heading">كل الأمور مستقرة</div>
-              <div class="insight-desc">سجل المزيد من العمليات اليومية لتوليد تقارير مالية مخصصة ومقترحات توفير ذكية.</div>
+              <div class="insight-heading">المحفظة في حالة توازن تام</div>
+              <div class="insight-desc">جميع مؤشرات الدخل والرصيد والمصاريف تسير بانتظام وانضباط ممتاز.</div>
             </div>
           </div>
         `;
       }
 
-      // توزيع الأساسيات والكماليات
-      const needsPct = total > 0 ? Math.round((analysis.needsSum / total) * 100) : 50;
-      const wantsPct = total > 0 ? (100 - needsPct) : 50;
+      // 6. تشغيل محاكي تنمية المحفظة (What-If Simulator)
+      updateSimulator(totalExpenses, analysis.projectedExpensesEnd, analysis.daysRemaining);
+
+      // 7. تحديث رادار التسربات الخفية
+      const leaksContentEl = document.getElementById('leaksContent');
+      if (analysis.microCount > 0) {
+        const potentialSave = Math.round(analysis.microSum * 0.5);
+        leaksContentEl.innerHTML = `
+          رصد النظام <strong>${analysis.microCount} عمليات صغيرة متكررة</strong> بلغت قيمتها <strong>${formatNumber(analysis.microSum)} ${state.currency}</strong> (التهمت ${analysis.microPctOfIncome}% من ميزانيتك).<br>
+          💡 <strong>أثر التوفير على رصيدك:</strong> توفير نصف هذه النفقات الصغيرة يرفع رصيدك الشهري فوراً بمقدار <strong>+${formatNumber(potentialSave)} ${state.currency}</strong>.
+        `;
+        document.getElementById('leaksBadge').textContent = `${analysis.microPctOfIncome}% تسرب`;
+      } else {
+        leaksContentEl.innerHTML = 'لم يتم رصد تسربات مالية متكررة للمبالغ الصغيرة. مصاريفك مركزة وواعية!';
+        document.getElementById('leaksBadge').textContent = 'نظيف ✓';
+      }
+
+      // 8. توزيع مصادر الدخل وتوزيع فئات المصاريف
+      renderDualBreakdowns(filteredIncomes, totalIncomes, filteredExpenses, totalExpenses);
+
+      // 9. توزيع الضروريات والكماليات
+      const needsPct = totalExpenses > 0 ? Math.round((analysis.needsSum / totalExpenses) * 100) : 50;
+      const wantsPct = totalExpenses > 0 ? (100 - needsPct) : 50;
       document.getElementById('ratioNeedsBar').style.width = `${needsPct}%`;
       document.getElementById('ratioWantsBar').style.width = `${wantsPct}%`;
       document.getElementById('ratioText').textContent = `${needsPct}% أساسيات / ${wantsPct}% كماليات`;
       document.getElementById('ratioNeedsVal').textContent = `${formatNumber(analysis.needsSum)} ${state.currency}`;
       document.getElementById('ratioWantsVal').textContent = `${formatNumber(analysis.wantsSum)} ${state.currency}`;
 
-      // رسم المخطط البياني اليومي (Daily Bars)
+      // 10. رسم المخطط البياني اليومي
       const dailyMap = {};
-      filtered.forEach(e => {
+      filteredExpenses.forEach(e => {
         dailyMap[e.date] = (dailyMap[e.date] || 0) + e.amount;
       });
 
@@ -1952,7 +3214,7 @@
           const val = dailyMap[d];
           const pct = Math.max(8, Math.round((val / maxDaily) * 100));
           const isPeak = val === maxDaily && val > 0;
-          const shortDate = d.slice(5); // MM-DD
+          const shortDate = d.slice(5);
           return `
             <div class="bar-col" title="${d}: ${formatNumber(val)} ${state.currency}">
               <div class="bar-fill ${isPeak ? 'peak' : ''}" style="height:${pct}%;"></div>
@@ -1961,45 +3223,68 @@
           `;
         }).join('');
       } else {
-        barsContainer.innerHTML = `<div class="empty-state" style="width:100%; padding:20px 0;">لا توجد بيانات للأيام الأخيرة</div>`;
+        barsContainer.innerHTML = `<div class="empty-state" style="width:100%; padding:20px 0;">لا توجد مصاريف مسجلة في الأيام الأخيرة</div>`;
       }
+    }
 
-      // التوزيع التفصيلي حسب الفئة
-      const byCat = {};
-      filtered.forEach(e => {
-        const key = e.catName;
-        if (!byCat[key]) {
-          byCat[key] = {
-            emoji: e.catEmoji || '🏷️',
-            color: getCatColor(e.catName, e.catColor),
-            sum: 0,
-            count: 0
-          };
-        }
-        byCat[key].sum += e.amount;
-        byCat[key].count += 1;
+    function renderDualBreakdowns(incomes, totalIncomes, expenses, totalExpenses) {
+      // Income sources breakdown
+      const incMap = {};
+      incomes.forEach(inc => {
+        const k = inc.sourceName;
+        if (!incMap[k]) incMap[k] = { name: inc.sourceName, emoji: inc.sourceEmoji || '💰', color: inc.sourceColor || 'tag-green', sum: 0, count: 0 };
+        incMap[k].sum += inc.amount;
+        incMap[k].count++;
       });
+      const sortedIncs = Object.values(incMap).sort((a, b) => b.sum - a.sum);
+      const incListEl = document.getElementById('statsIncomeSourcesList');
+      document.getElementById('statsIncomeSumBadge').textContent = `+${formatNumber(totalIncomes)} ${state.currency}`;
 
-      const sorted = Object.entries(byCat).sort((a, b) => b[1].sum - a[1].sum);
-      const categoriesContainer = document.getElementById('statsCategoriesContainer');
-
-      if (sorted.length) {
-        const [topCatName, topCatData] = sorted[0];
-        const topPct = total > 0 ? Math.round((topCatData.sum / total) * 100) : 0;
-        document.getElementById('kpiTopCategory').textContent = `${topCatData.emoji} ${topCatName}`;
-        document.getElementById('kpiTopCategorySub').textContent = `${topPct}% من إجمالي النفقات`;
-
-        categoriesContainer.innerHTML = sorted.map(([name, info], index) => {
-          const pct = total > 0 ? Math.round((info.sum / total) * 100) : 0;
+      if (sortedIncs.length) {
+        incListEl.innerHTML = sortedIncs.map(s => {
+          const pct = totalIncomes > 0 ? Math.round((s.sum / totalIncomes) * 100) : 0;
           return `
             <div class="cat-rank-item">
               <div class="cat-rank-top">
-                <span class="tag-pill ${info.color}">
-                  <span>${info.emoji}</span>
-                  <span>${name}</span>
-                  <small style="opacity:0.75; font-size:10px;">(${info.count} عملية)</small>
+                <span class="tag-pill ${s.color}">
+                  <span>${s.emoji}</span>
+                  <span>${s.name}</span>
                 </span>
-                <span style="font-weight:700;">${formatNumber(info.sum)} ${state.currency} <span style="font-size:11px; color:var(--text-sec); font-weight:normal;">(${pct}%)</span></span>
+                <span style="font-weight:700; color:var(--income-accent);">+${formatNumber(s.sum)} ${state.currency} <span style="font-size:10px; color:var(--text-sec); font-weight:normal;">(${pct}%)</span></span>
+              </div>
+              <div class="app-progress-bar">
+                <div class="app-progress-fill" style="width:${pct}%; background:var(--income-accent);"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        incListEl.innerHTML = `<div class="empty-state" style="padding:12px 0;">لا توجد مبالغ داخلة مسجلة</div>`;
+      }
+
+      // Expense categories breakdown
+      const expMap = {};
+      expenses.forEach(e => {
+        const k = e.catName;
+        if (!expMap[k]) expMap[k] = { name: e.catName, emoji: e.catEmoji || '🏷️', color: getCatColor(e.catName, e.catColor), sum: 0, count: 0 };
+        expMap[k].sum += e.amount;
+        expMap[k].count++;
+      });
+      const sortedExps = Object.values(expMap).sort((a, b) => b.sum - a.sum);
+      const expListEl = document.getElementById('statsExpenseCategoriesList');
+      document.getElementById('statsExpenseSumBadge').textContent = `-${formatNumber(totalExpenses)} ${state.currency}`;
+
+      if (sortedExps.length) {
+        expListEl.innerHTML = sortedExps.map(e => {
+          const pct = totalExpenses > 0 ? Math.round((e.sum / totalExpenses) * 100) : 0;
+          return `
+            <div class="cat-rank-item">
+              <div class="cat-rank-top">
+                <span class="tag-pill ${e.color}">
+                  <span>${e.emoji}</span>
+                  <span>${e.name}</span>
+                </span>
+                <span style="font-weight:700;">${formatNumber(e.sum)} ${state.currency} <span style="font-size:10px; color:var(--text-sec); font-weight:normal;">(${pct}%)</span></span>
               </div>
               <div class="app-progress-bar">
                 <div class="app-progress-fill" style="width:${pct}%; background:var(--accent);"></div>
@@ -2008,20 +3293,27 @@
           `;
         }).join('');
       } else {
-        document.getElementById('kpiTopCategory').textContent = '—';
-        document.getElementById('kpiTopCategorySub').textContent = 'لا توجد بيانات';
-        categoriesContainer.innerHTML = `<div class="empty-state">سجّل بعض المصاريف لعرض التوزيع التفصيلي</div>`;
+        expListEl.innerHTML = `<div class="empty-state" style="padding:12px 0;">لا توجد مصاريف مسجلة</div>`;
       }
     }
+
 
     function saveSettings() {
       state.currency = document.getElementById('currencySelect').value;
       state.budget = parseFloat(document.getElementById('budgetInput').value) || 0;
+      state.initialBalance = parseFloat(document.getElementById('initialBalanceInput').value) || 0;
+      
       const startDaySel = document.getElementById('monthStartDaySelect');
       if (startDaySel) state.monthStartDay = parseInt(startDaySel.value, 10) || 1;
+
       const chipsRaw = document.getElementById('chipsInput').value;
       const parsedChips = chipsRaw.split(',').map(s => parseFloat(s.trim())).filter(n => n > 0);
       if (parsedChips.length) state.quickAmounts = parsedChips;
+
+      const incChipsRaw = document.getElementById('incomeChipsInput').value;
+      const parsedIncChips = incChipsRaw.split(',').map(s => parseFloat(s.trim())).filter(n => n > 0);
+      if (parsedIncChips.length) state.incomeQuickAmounts = parsedIncChips;
+
       saveState();
       renderAll();
       showToast('تم حفظ الإعدادات بنجاح ✓');
@@ -2053,17 +3345,22 @@
     }
 
     function exportCSV() {
-      if (!state.expenses.length) return alert('لا توجد سجلات لتصديرها');
-      const rows = [['التاريخ', 'الفئة', 'البيان', 'المبلغ', 'العملة']];
+      if (!state.expenses.length && !(state.incomes || []).length) return alert('لا توجد سجلات لتصديرها');
+      const rows = [['النوع', 'التاريخ', 'الفئة / المصدر', 'البيان', 'المبلغ', 'العملة']];
+      
       state.expenses.forEach(e => {
-        rows.push([e.date, e.catName, `"${(e.note || '').replace(/"/g, '""')}"`, e.amount, state.currency]);
+        rows.push(['مصروف', e.date, e.catName, `"${(e.note || '').replace(/"/g, '""')}"`, -e.amount, state.currency]);
       });
+      (state.incomes || []).forEach(i => {
+        rows.push(['دخل وارد', i.date, i.sourceName, `"${(i.note || '').replace(/"/g, '""')}"`, i.amount, state.currency]);
+      });
+
       const csvContent = '\uFEFF' + rows.map(r => r.join(',')).join('\n');
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `masarifi_expenses_${getTodayISO()}.csv`;
+      a.download = `masarifi_statement_${getTodayISO()}.csv`;
       a.click();
     }
 
@@ -2072,7 +3369,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `masarifi_backup_${getTodayISO()}.json`;
+      a.download = `masarifi_wallet_backup_${getTodayISO()}.json`;
       a.click();
     }
 
@@ -2083,11 +3380,11 @@
       reader.onload = e => {
         try {
           const imported = JSON.parse(e.target.result);
-          if (imported && Array.isArray(imported.expenses)) {
+          if (imported && (Array.isArray(imported.expenses) || Array.isArray(imported.incomes))) {
             state = { ...defaultData, ...imported };
             saveState();
             init();
-            showToast('تم استيراد البيانات بنجاح ✓');
+            showToast('تم استيراد المحفظة والبيانات بنجاح ✓');
           }
         } catch (err) {
           alert('الملف غير صالح');
@@ -2097,8 +3394,9 @@
     }
 
     function clearAllData() {
-      if (confirm('هل أنت متأكد من مسح جميع السجلات المحفوظة؟ لا يمكن التراجع عن هذه الخطوة.')) {
+      if (confirm('هل أنت متأكد من مسح جميع سجلات المصاريف والدخل المحفوظة؟ لا يمكن التراجع عن هذه الخطوة.')) {
         state.expenses = [];
+        state.incomes = [];
         saveState();
         renderAll();
         showToast('تم مسح جميع السجلات');
@@ -2123,9 +3421,12 @@
 
     function renderAll() {
       renderQuickChips();
+      renderIncomeQuickChips();
       renderCategories();
+      renderIncomeSources();
       renderSummary();
       renderExpenses();
+      renderIncomes();
       renderStats();
     }
 
